@@ -7,6 +7,8 @@ from pypdevs.DEVS import AtomicDEVS, CoupledDEVS
 from pypdevs.simulator import Simulator
 from pypdevs.infinity import INFINITY
 
+from settings import NUMBER_OF_FLOORS
+
 logging.basicConfig()
 logger = logging.getLogger("Model")
 logger.setLevel(logging.DEBUG)
@@ -22,7 +24,6 @@ class Elevator(AtomicDEVS):
         self.outport = self.addOutPort("outport")
         self.state = "IDLE"
         self.floor = 0
-        self.max_floors = 10
 
     def timeAdvance(self):
         if self.state == "IDLE":
@@ -32,6 +33,7 @@ class Elevator(AtomicDEVS):
 
     def outputFnc(self):
         logger.info("Out: %s", self.floor)
+        self.api.update_floor(self.floor)
         return {self.outport: self.floor}
 
     def intTransition(self):
@@ -43,7 +45,7 @@ class Elevator(AtomicDEVS):
         logger.info("Ext: %s", inputs.values())
         self.state = inputs[self.inport]
         if self.state == "UP":
-            self.floor = self.floor + 1 if self.floor < self.max_floors else self.floor
+            self.floor = self.floor + 1 if self.floor < NUMBER_OF_FLOORS else self.floor
         elif self.state == "DOWN":
             self.floor = self.floor - 1 if self.floor > 0 else self.floor
         return self.state
@@ -75,10 +77,15 @@ class Model(CoupledDEVS):
         self.connectPorts(self.request.outport, self.elevator.inport)
 
 
-model = Model(None)
-sim = Simulator(model)
-sim.setClassicDEVS()
-sim.setTerminationTime(40.0)
-sim.setVerbose()
-sim.simulate()
+if __name__ == "__main__":
 
+    class FakeGUI:
+        def __getattr__(self, item):
+            return lambda *args, **kwargs: True
+
+    model = Model(FakeGUI())
+    sim = Simulator(model)
+    sim.setClassicDEVS()
+    sim.setTerminationTime(40.0)
+    sim.setVerbose()
+    sim.simulate()
