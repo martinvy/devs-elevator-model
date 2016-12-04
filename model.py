@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import random
+import logging
 
 from pypdevs.DEVS import AtomicDEVS, CoupledDEVS
 from pypdevs.simulator import Simulator
 from pypdevs.infinity import INFINITY
+
+logging.basicConfig()
+logger = logging.getLogger("Model")
+logger.setLevel(logging.DEBUG)
 
 
 class Elevator(AtomicDEVS):
@@ -26,19 +31,21 @@ class Elevator(AtomicDEVS):
             return self.MOVE_TIME
 
     def outputFnc(self):
-        print(self.floor)
+        logger.info("Out: %s", self.floor)
         return {self.outport: self.floor}
 
     def intTransition(self):
-        if self.state == "UP":
-            self.floor = self.floor + 1 if self.floor < self.max_floors else self.floor
-        elif self.state == "DOWN":
-            self.floor = self.floor - 1 if self.floor > 0 else self.floor
+        logger.info("Int: %s", self.floor)
         self.state = "IDLE"
         return self.state
 
     def extTransition(self, inputs):
+        logger.info("Ext: %s", inputs.values())
         self.state = inputs[self.inport]
+        if self.state == "UP":
+            self.floor = self.floor + 1 if self.floor < self.max_floors else self.floor
+        elif self.state == "DOWN":
+            self.floor = self.floor - 1 if self.floor > 0 else self.floor
         return self.state
 
 
@@ -49,12 +56,15 @@ class RandomRequest(AtomicDEVS):
         super().__init__("Request")
         self.api = api
         self.outport = self.addOutPort("output")
+        self.state = False
 
     def timeAdvance(self):
+        self.state = True
         return self.REQUEST_INTERVAL
 
     def outputFnc(self):
-        return {self.outport: random.choice(("UP", "DOWN"))}
+        if self.state:
+            return {self.outport: random.choice(("UP", "DOWN"))}
 
 
 class Model(CoupledDEVS):
@@ -68,7 +78,7 @@ class Model(CoupledDEVS):
 model = Model(None)
 sim = Simulator(model)
 sim.setClassicDEVS()
-sim.setTerminationTime(20.0)
+sim.setTerminationTime(40.0)
 sim.setVerbose()
 sim.simulate()
 
