@@ -51,8 +51,63 @@ class Elevator(AtomicDEVS):
         return self.state
 
 
+class ElevatorGO(AtomicDEVS):
+    def __init__(self, api):
+        super().__init__("ElevatorGO")
+        self.api = api
+        self.inport_go = self.addInPort("inport_go")
+        self.inport_floor = self.addInPort("inport_floor")
+        self.outport = self.addOutPort("outport")
+        self.state = "IDLE"
+        self.current_floor = 0
+        self.last_stop = 0
+        self.next_stop = 0
+
+    def timeAdvance(self):
+        if self.state == "IDLE":
+            return INFINITY
+        if self.state == "GO":
+            return 0
+
+    def outputFnc(self):
+        logger.info("Out: %s -> %s", self.current_floor, self.next_stop)
+        direction = "UP" if self.next_stop > self.current_floor else "DOWN"
+        return {self.outport: direction}
+
+    def intTransition(self):
+        logger.info("Int: %s", self.current_floor)
+        self.state = "IDLE"
+        return self.state
+
+    def extTransition(self, inputs):
+        logger.info("Ext: %s", inputs.values())
+
+        floor = inputs.get(self.inport_floor)
+        if floor:
+            self.current_floor = floor
+            if self.next_stop == floor:
+                self.state = "IDLE"
+                self.api.clear_destination_floor()
+            else:
+                self.state = "GO"
+
+        next_stop = inputs.get(self.inport_go)
+        if next_stop:
+            if self.state == "IDLE":
+                if next_stop == self.current_floor:
+                    pass
+                else:
+                    self.state = "GO"
+                    self.next_stop = next_stop
+                    self.api.set_destination_floor(next_stop)
+            else:
+                # TODO: new customer can't use elevator which is moving now
+                pass
+        return self.state
+
+
 class RandomRequest(AtomicDEVS):
-    REQUEST_INTERVAL = 5
+    REQUEST_INTERVAL = 19
 
     def __init__(self, api):
         super().__init__("Request")
@@ -66,15 +121,18 @@ class RandomRequest(AtomicDEVS):
 
     def outputFnc(self):
         if self.state:
-            return {self.outport: random.choice(("UP", "DOWN"))}
+            return {self.outport: random.choice(range(NUMBER_OF_FLOORS))}
 
 
 class Model(CoupledDEVS):
     def __init__(self, api):
         super().__init__("model")
         self.elevator = self.addSubModel(Elevator(api))
+        self.elevator_go = self.addSubModel(ElevatorGO(api))
         self.request = self.addSubModel(RandomRequest(api))
-        self.connectPorts(self.request.outport, self.elevator.inport)
+        self.connectPorts(self.elevator_go.outport, self.elevator.inport)
+        self.connectPorts(self.elevator.outport, self.elevator_go.inport_floor)
+        self.connectPorts(self.request.outport, self.elevator_go.inport_go)
 
 
 if __name__ == "__main__":
@@ -86,6 +144,6 @@ if __name__ == "__main__":
     model = Model(FakeGUI())
     sim = Simulator(model)
     sim.setClassicDEVS()
-    sim.setTerminationTime(40.0)
+    sim.setTerminationTime(50.0)
     sim.setVerbose()
     sim.simulate()

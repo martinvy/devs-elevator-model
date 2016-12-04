@@ -25,7 +25,7 @@ class App:
 
         # widgets
         self.top_label = tk.Label(self.frame, text="Elevator", background=self.BACKGROUND)
-        self.floors = self.create_floors()
+        self.floors, self.floors_info = self.create_floors()
         self.update_floor(0)  # set floor #0 as initial
         self.bottom_label = tk.Label(self.frame, text="====", background=self.BACKGROUND)
 
@@ -38,17 +38,29 @@ class App:
         self.bottom_label.grid(row=NUMBER_OF_FLOORS + 1, column=0)
 
     def create_floors(self):
-        floors = {}
+        floors, floors_info = {}, {}
         for floor in range(NUMBER_OF_FLOORS):
             label = tk.Label(self.frame, text="", background=self.BACKGROUND)
             label.grid(row=NUMBER_OF_FLOORS - floor, column=0)
             floors[floor] = label
-        return floors
+
+            label = tk.Label(self.frame, text="", background=self.BACKGROUND)
+            label.grid(row=NUMBER_OF_FLOORS - floor, column=1)
+            floors_info[floor] = label
+        return floors, floors_info
 
     def update_floor(self, new_floor: int):
         for floor in self.floors.values():
             floor["text"] = ""
         self.floors[new_floor]["text"] = "[]"
+
+    def clear_destination_floor(self):
+        for floor in self.floors_info.values():
+            floor["text"] = ""
+
+    def set_destination_floor(self, new_floor: int):
+        self.clear_destination_floor()
+        self.floors_info[new_floor]["text"] = "x"
 
 
 if __name__ == "__main__":
