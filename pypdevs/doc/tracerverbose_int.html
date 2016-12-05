@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Verbose Tracer &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Tracers" href="tracers.html" />
+    <link rel="next" title="XML Tracer" href="tracerxml_int.html" />
+    <link rel="prev" title="Tracers" href="tracers_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tracerxml_int.html" title="XML Tracer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tracers_int.html" title="Tracers"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="tracers.html" accesskey="U">Tracers</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="verbose-tracer">
+<h1>Verbose Tracer<a class="headerlink" href="#verbose-tracer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="tracers.tracerVerbose.TracerVerbose">
+<em class="property">class </em><code class="descclassname">tracers.tracerVerbose.</code><code class="descname">TracerVerbose</code><span class="sig-paren">(</span><em>uid</em>, <em>server</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tracer for simple verbose output</p>
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>uid</em>, <em>server</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>uid</strong> &#8211; the UID of this tracer</li>
+<li><strong>server</strong> &#8211; the server to make remote calls on</li>
+<li><strong>filename</strong> &#8211; file to save the trace to, can be None for output to stdout</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.startTracer">
+<code class="descname">startTracer</code><span class="sig-paren">(</span><em>recover</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.startTracer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.startTracer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts up the tracer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recover</strong> &#8211; whether or not this is a recovery call (so whether or not the file should be appended to)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.stopTracer">
+<code class="descname">stopTracer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.stopTracer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.stopTracer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the tracer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.trace">
+<code class="descname">trace</code><span class="sig-paren">(</span><em>time</em>, <em>text</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actual tracing function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time</strong> &#8211; time at which this trace happened</li>
+<li><strong>text</strong> &#8211; the text that was traced</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.traceConfluent">
+<code class="descname">traceConfluent</code><span class="sig-paren">(</span><em>aDEVS</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.traceConfluent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.traceConfluent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracing done for the confluent transition function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model that transitioned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.traceExternal">
+<code class="descname">traceExternal</code><span class="sig-paren">(</span><em>aDEVS</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.traceExternal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.traceExternal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracing done for the external transition function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model that transitioned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.traceInit">
+<code class="descname">traceInit</code><span class="sig-paren">(</span><em>aDEVS</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.traceInit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.traceInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracing done for the initialisation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>aDEVS</strong> &#8211; the model that was initialised</li>
+<li><strong>t</strong> &#8211; time at which it should be traced</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVerbose.TracerVerbose.traceInternal">
+<code class="descname">traceInternal</code><span class="sig-paren">(</span><em>aDEVS</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVerbose.html#TracerVerbose.traceInternal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVerbose.TracerVerbose.traceInternal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracing done for the internal transition function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model that transitioned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tracers_int.html"
+                        title="previous chapter">Tracers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tracerxml_int.html"
+                        title="next chapter">XML Tracer</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/tracerverbose_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tracerxml_int.html" title="XML Tracer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tracers_int.html" title="Tracers"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="tracers.html" >Tracers</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

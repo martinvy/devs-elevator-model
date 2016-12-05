@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>VCD Tracer &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Tracers" href="tracers.html" />
+    <link rel="next" title="Cell Tracer" href="tracercell_int.html" />
+    <link rel="prev" title="XML Tracer" href="tracerxml_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tracercell_int.html" title="Cell Tracer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tracerxml_int.html" title="XML Tracer"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="tracers.html" accesskey="U">Tracers</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vcd-tracer">
+<h1>VCD Tracer<a class="headerlink" href="#vcd-tracer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="tracers.tracerVCD.TracerVCD">
+<em class="property">class </em><code class="descclassname">tracers.tracerVCD.</code><code class="descname">TracerVCD</code><span class="sig-paren">(</span><em>uid</em>, <em>server</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tracer for VCD output. Should only be used for binary signals!</p>
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>uid</em>, <em>server</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>uid</strong> &#8211; the UID of the tracer</li>
+<li><strong>server</strong> &#8211; the server to make remote requests on</li>
+<li><strong>filename</strong> &#8211; file to save the trace to</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.startTracer">
+<code class="descname">startTracer</code><span class="sig-paren">(</span><em>recover</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.startTracer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.startTracer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts up the tracer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recover</strong> &#8211; whether or not this is a recovery call (so whether or not the file should be appended to)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.stopTracer">
+<code class="descname">stopTracer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.stopTracer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.stopTracer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the tracer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.trace">
+<code class="descname">trace</code><span class="sig-paren">(</span><em>model_name</em>, <em>time</em>, <em>port_name</em>, <em>vcd_state</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trace a VCD entry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_name</strong> &#8211; name of the model</li>
+<li><strong>time</strong> &#8211; time at which transition happened</li>
+<li><strong>port_name</strong> &#8211; name of the port</li>
+<li><strong>vcd_state</strong> &#8211; state to trace on the specified port</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.traceConfluent">
+<code class="descname">traceConfluent</code><span class="sig-paren">(</span><em>aDEVS</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.traceConfluent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.traceConfluent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The trace functionality for VCD output at a confluent transition</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model that transitioned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.traceExternal">
+<code class="descname">traceExternal</code><span class="sig-paren">(</span><em>aDEVS</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.traceExternal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.traceExternal" title="Permalink to this definition">¶</a></dt>
+<dd><p>The trace functionality for VCD output at an external transition</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model that transitioned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.traceInit">
+<code class="descname">traceInit</code><span class="sig-paren">(</span><em>aDEVS</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.traceInit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.traceInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The trace functionality for VCD output at initialisation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>aDEVS</strong> &#8211; the model that was initialized</li>
+<li><strong>t</strong> &#8211; time at which it should be traced</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.traceInternal">
+<code class="descname">traceInternal</code><span class="sig-paren">(</span><em>aDEVS</em><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.traceInternal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.traceInternal" title="Permalink to this definition">¶</a></dt>
+<dd><p>The trace functionality for VCD output at an internal transition</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model that transitioned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracers.tracerVCD.TracerVCD.vcdHeader">
+<code class="descname">vcdHeader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/tracers/tracerVCD.html#TracerVCD.vcdHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracers.tracerVCD.TracerVCD.vcdHeader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the VCD file header by doing calls to the coordinator</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tracerxml_int.html"
+                        title="previous chapter">XML Tracer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tracercell_int.html"
+                        title="next chapter">Cell Tracer</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/tracervcd_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tracercell_int.html" title="Cell Tracer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tracerxml_int.html" title="XML Tracer"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="tracers.html" >Tracers</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

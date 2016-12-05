@@ -124,6 +124,70 @@ class RandomRequest(AtomicDEVS):
             return {self.outport: random.choice(range(NUMBER_OF_FLOORS))}
 
 
+class ButtonRequest(AtomicDEVS):
+    def __init__(self, api):
+        super().__init__("ButtonRequest")
+        self.api = api
+        self.inport_Extbutton = self.addInPort("inport_Extbutton")
+        self.inport_Intbutton = self.addInPort("inport_Intbutton")
+        self.inport_Floor = self.addInPort("inport_Floor")
+        self.outport = self.addOutPort("outport_GoFloor")
+        self.state = "IDLE"
+        self.all_floor = []
+        self.go_to_floor = 0
+
+    def timeAdvance(self):
+        return INFINITY
+
+    def outputFnc(self):
+        if self.state == "GO_TO":
+            return {self.outport: self.go_to_floor}
+
+    def intTransition(self):
+        logger.info("Int: %s", self.floor)
+        self.state = "IDLE"
+        return self.state
+
+    def extTransition(self, inputs):
+        logger.info("Ext: %s", inputs.values())
+        ext_button = inputs.get(self.inport_Extbutton)
+        if ext_button:
+            self.ExtButton = ext_button
+            self.floor = inputs.get(self.inport_Floor)
+            if self.state == "IDLE":
+                self.all_floor.clear()
+                self.all_floor.append(self.ExtButton % 10)
+                self.state = "GO_TO"
+            elif self.state == "MOVING":
+                if self.floor == self.go_to_floor:
+                    if len(self.all_floor) == 0:
+                        self.state = "IDLE"
+                    else:
+                        self.state = "GO_TO"
+                if self.floor < self.all_floor[0]:
+                    if self.ExtButton/10 == 1 and self.ExtButton % 10 < self.all_floor[0]:
+                        self.all_floor.append(self.ExtButton % 10)
+                        self.state = "GO_TO"
+                    else:
+                        self.all_floor.append(self.ExtButton % 10)
+                elif self.floor > self.all_floor[0]:
+                    if self.ExtButton / 10 == 2 and self.ExtButton % 10 > self.all_floor[0]:
+                        self.all_floor.append(self.ExtButton % 10)
+                        self.state = "GO_TO"
+                    else:
+                        self.all_floor.append(self.ExtButton % 10)
+                self.state = "GO_TO"
+            elif self.state == "GO_TO":
+                if max(self.all_floor) < self.floor:
+                    self.go_to_floor = max(self.all_floor)
+                    self.all_floor.remove(max(self.all_floor))
+                elif min(self.all_floor) > self.floor:
+                    self.go_to_floor = min(self.all_floor)
+                    self.all_floor.remove(min(self.all_floor))
+                self.state = "MOVING"
+            return self.state
+
+
 class Model(CoupledDEVS):
     def __init__(self, api):
         super().__init__("model")

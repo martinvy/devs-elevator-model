@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>minimal &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for minimal</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2015 Modelling, Simulation and Design Lab (MSDL) at </span>
+<span class="c"># McGill University and the University of Antwerp (http://msdl.cs.mcgill.ca/)</span>
+<span class="c"># </span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c">#</span>
+<span class="c">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c">#</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The minimal PythonPDEVS simulation kernel. It only supports simple Parallel DEVS simulation, without any fancy configuration options.</span>
+<span class="sd">While it behaves exactly the same as the normal simulation kernel with default options, it is a lot faster due to skipping all features.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">pypdevs.DEVS</span> <span class="kn">import</span> <span class="n">CoupledDEVS</span><span class="p">,</span> <span class="n">AtomicDEVS</span><span class="p">,</span> <span class="n">RootDEVS</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># Uncomment this part to make a completely stand-alone simulation kernel</span>
+<span class="sd">class BaseDEVS(object):</span>
+<span class="sd">    def __init__(self, name):</span>
+<span class="sd">        self.name = name</span>
+<span class="sd">        self.IPorts = []</span>
+<span class="sd">        self.OPorts = []</span>
+<span class="sd">        self.ports = []</span>
+<span class="sd">        self.parent = None</span>
+<span class="sd">        self.time_last = (0.0, 0)</span>
+<span class="sd">        self.time_next = (0.0, 1)</span>
+<span class="sd">        self.my_input = {}</span>
+
+<span class="sd">    def addPort(self, name, is_input):</span>
+<span class="sd">        name = name if name is not None else &quot;port%s&quot; % len(self.ports)</span>
+<span class="sd">        port = Port(is_input=is_input, name=name)</span>
+<span class="sd">        if is_input:</span>
+<span class="sd">            self.IPorts.append(port)</span>
+<span class="sd">        else:</span>
+<span class="sd">            self.OPorts.append(port)</span>
+<span class="sd">        port.port_id = len(self.ports)</span>
+<span class="sd">        self.ports.append(port)</span>
+<span class="sd">        port.host_DEVS = self</span>
+<span class="sd">        return port</span>
+
+<span class="sd">    def addInPort(self, name=None):</span>
+<span class="sd">        return self.addPort(name, True)</span>
+
+<span class="sd">    def addOutPort(self, name=None):</span>
+<span class="sd">        return self.addPort(name, False)</span>
+
+<span class="sd">    def getModelName(self):</span>
+<span class="sd">        return self.name</span>
+
+<span class="sd">    def getModelFullName(self):</span>
+<span class="sd">        return self.full_name</span>
+
+<span class="sd">class AtomicDEVS(BaseDEVS):</span>
+<span class="sd">    ID = 0</span>
+
+<span class="sd">    def __init__(self, name):</span>
+<span class="sd">        BaseDEVS.__init__(self, name)</span>
+<span class="sd">        self.elapsed = 0.0</span>
+<span class="sd">        self.state = None</span>
+<span class="sd">        self.model_id = AtomicDEVS.ID</span>
+<span class="sd">        AtomicDEVS.ID += 1</span>
+
+<span class="sd">    def extTransition(self, inputs):</span>
+<span class="sd">        return self.state</span>
+
+<span class="sd">    def intTransition(self):</span>
+<span class="sd">        return self.state</span>
+
+<span class="sd">    def confTransition(self, inputs):</span>
+<span class="sd">        self.state = self.intTransition()</span>
+<span class="sd">        return self.extTransition(inputs)</span>
+
+<span class="sd">    def timeAdvance(self):</span>
+<span class="sd">        return float(&#39;inf&#39;)</span>
+
+<span class="sd">    def outputFnc(self):</span>
+<span class="sd">        return {}</span>
+
+<span class="sd">class CoupledDEVS(BaseDEVS):</span>
+<span class="sd">    def __init__(self, name):</span>
+<span class="sd">        BaseDEVS.__init__(self, name)</span>
+<span class="sd">        self.component_set = []</span>
+
+<span class="sd">    def addSubModel(self, model):</span>
+<span class="sd">        model.parent = self</span>
+<span class="sd">        self.component_set.append(model)</span>
+<span class="sd">        return model</span>
+
+<span class="sd">    def connectPorts(self, p1, p2):</span>
+<span class="sd">        p1.outline.append(p2)</span>
+<span class="sd">        p2.inline.append(p1)</span>
+
+<span class="sd">class RootDEVS(object):</span>
+<span class="sd">    def __init__(self, components, scheduler):</span>
+<span class="sd">        self.component_set = components</span>
+<span class="sd">        self.time_next = float(&#39;inf&#39;)</span>
+<span class="sd">        self.scheduler = scheduler(self.component_set, 1e-6, len(self.component_set))</span>
+
+<span class="sd">class Port(object):</span>
+<span class="sd">    def __init__(self, is_input, name=None):</span>
+<span class="sd">        self.inline = []</span>
+<span class="sd">        self.outline = []</span>
+<span class="sd">        self.host_DEVS = None</span>
+<span class="sd">        self.name = name</span>
+
+<span class="sd">    def getPortname(self):</span>
+<span class="sd">        return self.name</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="directConnect"><a class="viewcode-back" href="../minimal_int.html#minimal.directConnect">[docs]</a><span class="k">def</span> <span class="nf">directConnect</span><span class="p">(</span><span class="n">component_set</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a trimmed down version of the direct connection algorithm.</span>
+
+<span class="sd">    It does not support transfer functions, but all the rest is the same.</span>
+
+<span class="sd">    :param component_set: the iterable to direct connect</span>
+<span class="sd">    :returns: the direct connected component_set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">component_set</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">CoupledDEVS</span><span class="p">):</span>
+            <span class="n">component_set</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">component_set</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Found an atomic model</span>
+            <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">component_set</span> <span class="o">=</span> <span class="n">new_list</span>
+
+    <span class="c"># All and only all atomic models are now direct children of this model</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">component_set</span><span class="p">:</span>
+        <span class="c"># Remap the output ports</span>
+        <span class="k">for</span> <span class="n">outport</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">OPorts</span><span class="p">:</span>
+            <span class="c"># The new contents of the line</span>
+            <span class="n">outport</span><span class="o">.</span><span class="n">routing_outline</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">worklist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">outport</span><span class="o">.</span><span class="n">outline</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">outline</span> <span class="ow">in</span> <span class="n">worklist</span><span class="p">:</span>
+                <span class="c"># If it is a coupled model, we must expand this model</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outline</span><span class="o">.</span><span class="n">host_DEVS</span><span class="p">,</span> <span class="n">CoupledDEVS</span><span class="p">):</span>
+                    <span class="n">worklist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">outline</span><span class="o">.</span><span class="n">outline</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">outport</span><span class="o">.</span><span class="n">routing_outline</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">outline</span><span class="p">)</span>
+            <span class="n">outport</span><span class="o">.</span><span class="n">routing_outline</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">outport</span><span class="o">.</span><span class="n">routing_outline</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">component_set</span>
+</div>
+<div class="viewcode-block" id="Simulator"><a class="viewcode-back" href="../minimal_int.html#minimal.Simulator">[docs]</a><span class="k">class</span> <span class="nc">Simulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimal simulation kernel, offering only setTerminationTime and simulate.</span>
+<span class="sd">    </span>
+<span class="sd">    Use this Simulator instead of the normal one to use the minimal kernel.</span>
+<span class="sd">    While it has a lot less features, its performance is much higher.</span>
+<span class="sd">    The polymorphic scheduler is also used by default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator.__init__"><a class="viewcode-back" href="../minimal_int.html#minimal.Simulator.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param model: the model to simulate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">CoupledDEVS</span><span class="p">):</span>
+            <span class="n">component_set</span> <span class="o">=</span> <span class="n">directConnect</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">component_set</span><span class="p">)</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">component_set</span><span class="p">:</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">time_last</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">m</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">time_next</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">m</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">timeAdvance</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">ids</span>
+                <span class="n">ids</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">RootDEVS</span><span class="p">(</span><span class="n">component_set</span><span class="p">,</span> <span class="n">component_set</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">AtomicDEVS</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">OPorts</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">routing_outline</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">time_last</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">model</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">time_next</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">time_last</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">timeAdvance</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">RootDEVS</span><span class="p">([</span><span class="n">model</span><span class="p">],</span> <span class="p">[</span><span class="n">model</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">termination_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Simulator.setTerminationTime"><a class="viewcode-back" href="../minimal_int.html#minimal.Simulator.setTerminationTime">[docs]</a>    <span class="k">def</span> <span class="nf">setTerminationTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the termination time of the simulation.</span>
+
+<span class="sd">        :param time: simulation time at which simulation should terminate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">termination_time</span> <span class="o">=</span> <span class="n">time</span>
+</div>
+<div class="viewcode-block" id="Simulator.simulate"><a class="viewcode-back" href="../minimal_int.html#minimal.Simulator.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">schedulers.schedulerAuto</span> <span class="kn">import</span> <span class="n">SchedulerAuto</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">SchedulerAuto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">component_set</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">component_set</span><span class="p">))</span>
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">readFirst</span><span class="p">()</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_time</span>
+        <span class="k">while</span> <span class="n">tt</span> <span class="o">&gt;</span> <span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="c"># Generate outputs</span>
+            <span class="n">transitioning</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">getImminent</span><span class="p">(</span><span class="n">tn</span><span class="p">):</span>
+                <span class="n">transitioning</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">|=</span> <span class="mi">1</span>
+                <span class="n">outbag</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">outputFnc</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">outport</span> <span class="ow">in</span> <span class="n">outbag</span><span class="p">:</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">outbag</span><span class="p">[</span><span class="n">outport</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">inport</span> <span class="ow">in</span> <span class="n">outport</span><span class="o">.</span><span class="n">routing_outline</span><span class="p">:</span>
+                        <span class="n">inport</span><span class="o">.</span><span class="n">host_DEVS</span><span class="o">.</span><span class="n">my_input</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">inport</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                        <span class="n">transitioning</span><span class="p">[</span><span class="n">inport</span><span class="o">.</span><span class="n">host_DEVS</span><span class="p">]</span> <span class="o">|=</span> <span class="mi">2</span>
+
+            <span class="c"># Perform transitions</span>
+            <span class="k">for</span> <span class="n">aDEVS</span><span class="p">,</span> <span class="n">ttype</span> <span class="ow">in</span> <span class="n">transitioning</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">ttype</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">aDEVS</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">intTransition</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">ttype</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">aDEVS</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">aDEVS</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">extTransition</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">my_input</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">ttype</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">aDEVS</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.</span>
+                    <span class="n">aDEVS</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">confTransition</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">my_input</span><span class="p">)</span>
+                <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_next</span> <span class="o">=</span> <span class="p">(</span><span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">timeAdvance</span><span class="p">(),</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">tn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">tn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span> <span class="o">=</span> <span class="n">tn</span>
+                <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_input</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="c"># Do reschedules</span>
+            <span class="n">scheduler</span><span class="o">.</span><span class="n">massReschedule</span><span class="p">(</span><span class="n">transitioning</span><span class="p">)</span>
+            <span class="n">tn</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">readFirst</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper to inform users that they are using the minimal kernel if they zant to do some unsupported configuration option.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;set&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;You are using the minimal simulation kernel, which does not support any configuration except for the termination time. Please switch to the normal simulation kernel to use this option.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

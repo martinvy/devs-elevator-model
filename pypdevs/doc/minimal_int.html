@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Minimal Simulation Kernel &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Internal documentation" href="internal.html" />
+    <link rel="next" title="MPIRedirect class" href="mpiredirect_int.html" />
+    <link rel="prev" title="Middleware Detection" href="middleware_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mpiredirect_int.html" title="MPIRedirect class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="middleware_int.html" title="Middleware Detection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" accesskey="U">Internal documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="minimal-simulation-kernel">
+<h1>Minimal Simulation Kernel<a class="headerlink" href="#minimal-simulation-kernel" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="minimal.directConnect">
+<code class="descclassname">minimal.</code><code class="descname">directConnect</code><span class="sig-paren">(</span><em>component_set</em><span class="sig-paren">)</span><a class="reference internal" href="modules/minimal.html#directConnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#minimal.directConnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a trimmed down version of the direct connection algorithm.</p>
+<p>It does not support transfer functions, but all the rest is the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>component_set</strong> &#8211; the iterable to direct connect</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the direct connected component_set</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="minimal.Simulator">
+<em class="property">class </em><code class="descclassname">minimal.</code><code class="descname">Simulator</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="modules/minimal.html#Simulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#minimal.Simulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimal simulation kernel, offering only setTerminationTime and simulate.</p>
+<p>Use this Simulator instead of the normal one to use the minimal kernel.
+While it has a lot less features, its performance is much higher.
+The polymorphic scheduler is also used by default.</p>
+<dl class="method">
+<dt id="minimal.Simulator.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="modules/minimal.html#Simulator.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#minimal.Simulator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; the model to simulate</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="minimal.Simulator.setTerminationTime">
+<code class="descname">setTerminationTime</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="modules/minimal.html#Simulator.setTerminationTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#minimal.Simulator.setTerminationTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the termination time of the simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time</strong> &#8211; simulation time at which simulation should terminate</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="minimal.Simulator.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/minimal.html#Simulator.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#minimal.Simulator.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the simulation</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="middleware_int.html"
+                        title="previous chapter">Middleware Detection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mpiredirect_int.html"
+                        title="next chapter">MPIRedirect class</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/minimal_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mpiredirect_int.html" title="MPIRedirect class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="middleware_int.html" title="Middleware Detection"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

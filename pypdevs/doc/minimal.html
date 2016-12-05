@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Minimal Simulation Kernel &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Advanced examples" href="advanced.html" />
+    <link rel="next" title="Multiple Simulators" href="multisim.html" />
+    <link rel="prev" title="Continuing a stopped simulation" href="continuing.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="multisim.html" title="Multiple Simulators"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="continuing.html" title="Continuing a stopped simulation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="advanced.html" accesskey="U">Advanced examples</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="minimal-simulation-kernel">
+<h1>Minimal Simulation Kernel<a class="headerlink" href="#minimal-simulation-kernel" title="Permalink to this headline">¶</a></h1>
+<p>Due to the many features that PythonPDEVS supports, the code is quite big and many additional steps need to be taken during simulation.
+Certainly with Python, this causes problems due to the lack of compilation (and consequently optimization).
+For this reason, but also to show the minimal simulation algorithm of PythonPDEVS, a minimal simulation kernel is added.</p>
+<p>Such a minimal kernel, even without any special features, is useful for benchmarking different algorithms, without needing to worry about the supported features.
+It can also be useful for end-users, if the user is only interested in the state of the simulated model.</p>
+<p>Its use is identical to the normal simulation kernel, but the import is different.
+Instead of importing <em>Simulator</em> from the file <em>simulator.py</em>, it needs to be imported from <em>minimal.py</em>.
+So the only change is the import, which becomes something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pypdevs.minimal</span> <span class="kn">import</span> <span class="n">Simulator</span>
+</pre></div>
+</div>
+<p>All other code remains exactly the same.
+Unless configuration options (apart from <em>setTerminationTime</em>) are used, as these will no longer be possible.
+The only supported option is <em>setTerminationTime</em>, which works exactly the same as in the normal simulation kernel.
+While it is still possible to define transfer functions or define allocations in the model construction, these are ignored during simulation.</p>
+<p>The polymorphic scheduler is used automatically, so the performance will automatically be optimized to the different access patterns.
+There is thus no need to manually specify the scheduler.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="continuing.html"
+                        title="previous chapter">Continuing a stopped simulation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="multisim.html"
+                        title="next chapter">Multiple Simulators</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/minimal.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="multisim.html" title="Multiple Simulators"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="continuing.html" title="Continuing a stopped simulation"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="advanced.html" >Advanced examples</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Simulator &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Internal documentation" href="internal.html" />
+    <link rel="next" title="Simulator Configuration" href="simconfig_int.html" />
+    <link rel="prev" title="Server" href="server_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simconfig_int.html" title="Simulator Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="server_int.html" title="Server"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" accesskey="U">Internal documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="simulator">
+<h1>Simulator<a class="headerlink" href="#simulator" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="simulator.loadCheckpoint">
+<code class="descclassname">simulator.</code><code class="descname">loadCheckpoint</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#loadCheckpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.loadCheckpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a previously created simulation from a saved checkpoint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; the name of the model to provide some distinction between different simulation models</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">either None if no recovery was possible, or the Simulator object after simulation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulator.local">
+<code class="descclassname">simulator.</code><code class="descname">local</code><span class="sig-paren">(</span><em>sim</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether or not the simulation is done locally</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sim</strong> &#8211; the simulator with the locations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool &#8211; whether or not the simulation is local</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="simulator.Simulator">
+<em class="property">class </em><code class="descclassname">simulator.</code><code class="descname">Simulator</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Associates a hierarchical DEVS model with the simulation engine.</p>
+<dl class="method">
+<dt id="simulator.Simulator.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor of the simulator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> &#8211; a valid model (created with the provided functions)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.checkpoint">
+<code class="descname">checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a checkpoint of this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.drawModelConnections">
+<code class="descname">drawModelConnections</code><span class="sig-paren">(</span><em>outfile</em>, <em>model</em>, <em>colors=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.drawModelConnections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.drawModelConnections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws all necessary connections between the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>outfile</strong> &#8211; the file to output to</li>
+<li><strong>model</strong> &#8211; a CoupledDEVS model whose children should be drawn</li>
+<li><strong>colors</strong> &#8211; the colors to draw on the connections. Only used when an initial allocator is used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.drawModelHierarchy">
+<code class="descname">drawModelHierarchy</code><span class="sig-paren">(</span><em>outfile</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.drawModelHierarchy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.drawModelHierarchy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws the hierarchy by creating a Graphviz Dot file. This merely creates the first part: the hierarchy of all models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>outfile</strong> &#8211; a file handle to write text to</li>
+<li><strong>model</strong> &#8211; the model to draw</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.loadCheckpoint">
+<code class="descname">loadCheckpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.loadCheckpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.loadCheckpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alert the Simulator that it was restored from a checkpoint and thus can take some shortcuts</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.loadLocationsFromFile">
+<code class="descname">loadLocationsFromFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.loadLocationsFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.loadLocationsFromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to load a file containing the allocation of the nodes. If such a (valid) file is found, True is returned. Otherwise False is returned.</p>
+<p>This can thus easily be used in a simulator experiment file as a condition for setting an allocator (e.g. check for an allocation file and if
+none is found, create one by running the allocator first).</p>
+<p>A partially valid file will not be used; a file does not need to specify an allocation for all models, those that aren&#8217;t mentioned are simply
+skipped and their default allocation is used (as specified in the model itself).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> &#8211; the name of the file to use</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool &#8211; success of the operation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.modifyAttributes">
+<code class="descname">modifyAttributes</code><span class="sig-paren">(</span><em>model_id</em>, <em>attr</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.modifyAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.modifyAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify an attribute of a specific model.</p>
+<p><strong>Do NOT call this method directly, but call it through the simconfig interface</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_id</strong> &#8211; the model_id of the model to modify the state from</li>
+<li><strong>attr</strong> &#8211; the name of the attribute of the model to modify</li>
+<li><strong>value</strong> &#8211; the value to set as attribute</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.modifyState">
+<code class="descname">modifyState</code><span class="sig-paren">(</span><em>model_id</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.modifyState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.modifyState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify the state of a specific model.</p>
+<p><strong>Do NOT call this method directly, but call it through the simconfig interface</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_id</strong> &#8211; the model_id of the model to modify the state from</li>
+<li><strong>state</strong> &#8211; the state to configure</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.modifyStateAttr">
+<code class="descname">modifyStateAttr</code><span class="sig-paren">(</span><em>model_id</em>, <em>attr</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.modifyStateAttr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.modifyStateAttr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify an attribute of the state of a specific model.</p>
+<p><strong>Do NOT call this method directly, but call it through the simconfig interface</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_id</strong> &#8211; the model_id of the model to modify the state from</li>
+<li><strong>attr</strong> &#8211; the name of the attribute of the state to modify</li>
+<li><strong>value</strong> &#8211; the value to set as attribute</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.real_simulate">
+<code class="descname">real_simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.real_simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.real_simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual simulation part, this is identical for the &#8216;start from scratch&#8217; and &#8216;start from checkpoint&#8217; algorithm, thus it was split up</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.realtime_interrupt">
+<code class="descname">realtime_interrupt</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.realtime_interrupt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.realtime_interrupt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an interrupt for the realtime backend using a method call.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>string</strong> &#8211; the value to interrupt with, should be of the form &#8220;port value&#8221;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.realtime_loop_call">
+<code class="descname">realtime_loop_call</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.realtime_loop_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.realtime_loop_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration in the loop for real time simulation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.reinit">
+<code class="descname">reinit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinitialize the model, so that a new <em>simulate()</em> call will restart the simulation anew.
+This is possible in both local and distributed simulation, 
+though it requires the <em>setAllowLocalReinit</em> method to be called first if you are running local simulation.</p>
+<p>The additional method call is required as allowing reinitialisation requires the complete model to be saved twice (a reinit copy and a working copy).</p>
+<p><strong>Do NOT call this method directly, but call it through the simconfig file</strong></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.removeTracers">
+<code class="descname">removeTracers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.removeTracers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.removeTracers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all currently registered tracers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.runStartup">
+<code class="descname">runStartup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.runStartup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.runStartup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform startup of the simulator right before simulation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.showProgress">
+<code class="descname">showProgress</code><span class="sig-paren">(</span><em>locations</em><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.showProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.showProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows the progress of the simulation by polling all locations that are passed. Should run on a seperate thread as this blocks!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>locations</strong> &#8211; list of all locations to access</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start simulation with the previously set options. Can be reran afterwards to continue the simulation of
+the model (or reinit it first and restart simulation), possibly after altering some aspects of the model with the provided methods.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulator.Simulator.startAllocator">
+<code class="descname">startAllocator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/simulator.html#Simulator.startAllocator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulator.Simulator.startAllocator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the use of an allocator if required, thus forcing all models to run at the controller</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="server_int.html"
+                        title="previous chapter">Server</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="simconfig_int.html"
+                        title="next chapter">Simulator Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/simulator_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simconfig_int.html" title="Simulator Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="server_int.html" title="Server"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

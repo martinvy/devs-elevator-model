@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Threading Backend &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Threading subsystems" href="threading.html" />
+    <link rel="next" title="Python threading" href="threadingpython_int.html" />
+    <link rel="prev" title="Threading subsystems" href="threading.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="threadingpython_int.html" title="Python threading"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="threading.html" title="Threading subsystems"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="threading.html" accesskey="U">Threading subsystems</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="threading-backend">
+<h1>Threading Backend<a class="headerlink" href="#threading-backend" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="realtime.threadingBackend.ThreadingBackend">
+<em class="property">class </em><code class="descclassname">realtime.threadingBackend.</code><code class="descname">ThreadingBackend</code><span class="sig-paren">(</span><em>subsystem</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around the actual threading backend. It will also handle interrupts and the passing of them to the calling thread.</p>
+<dl class="method">
+<dt id="realtime.threadingBackend.ThreadingBackend.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subsystem</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subsystem</strong> &#8211; string specifying the subsystem to use: python, tkinter or loop</li>
+<li><strong>args</strong> &#8211; all additional arguments that should be passed to the subsystem&#8217;s constructor (must be a list)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="realtime.threadingBackend.ThreadingBackend.getInterrupt">
+<code class="descname">getInterrupt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend.getInterrupt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend.getInterrupt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value of the interrupt and clear it internally.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the interrupt</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="realtime.threadingBackend.ThreadingBackend.interrupt">
+<code class="descname">interrupt</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend.interrupt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend.interrupt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interrupt a running wait call.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; the value that interrupts</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="realtime.threadingBackend.ThreadingBackend.setInterrupt">
+<code class="descname">setInterrupt</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend.setInterrupt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend.setInterrupt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of the interrupt. This should not be used manually and is only required to prevent the asynchronous combo generator from making <em>interrrupt()</em> calls.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; value with which the interrupt variable should be set</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="realtime.threadingBackend.ThreadingBackend.step">
+<code class="descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a step in the backend; only supported for the game loop backend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="realtime.threadingBackend.ThreadingBackend.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><em>time</em>, <em>func</em><span class="sig-paren">)</span><a class="reference internal" href="modules/realtime/threadingBackend.html#ThreadingBackend.wait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#realtime.threadingBackend.ThreadingBackend.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>A non-blocking call, which will call the <em>func</em> parameter after <em>time</em> seconds. It will use the provided backend to do this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time</strong> &#8211; time to wait in seconds, a float is possible</li>
+<li><strong>func</strong> &#8211; the function to call after the time has passed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="threading.html"
+                        title="previous chapter">Threading subsystems</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="threadingpython_int.html"
+                        title="next chapter">Python threading</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/threadingbackend_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="threadingpython_int.html" title="Python threading"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="threading.html" title="Threading subsystems"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="threading.html" >Threading subsystems</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

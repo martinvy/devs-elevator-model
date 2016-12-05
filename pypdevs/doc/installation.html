@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="next" title="How to run PyPDEVS" href="howto.html" />
+    <link rel="prev" title="Welcome to PythonPDEVS’s documentation!" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="howto.html" title="How to run PyPDEVS"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to PythonPDEVS’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>This section describes the necessary steps for installing PyPDEVS.</p>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The following dependencies are mandatory:</p>
+<ul class="simple">
+<li>python 2.7</li>
+</ul>
+<p>For parallel and distributed simulation, the following additional dependencies are required:</p>
+<ul class="simple">
+<li>MPICH3 with socket device</li>
+<li>mpi4py</li>
+</ul>
+<p>Installation instructions are given for these two dependencies further in this section.</p>
+<p>Realtime simulation using the Tk backend, obviously requires Tk.</p>
+</div>
+<div class="section" id="pypdevs-installation">
+<h2>PyPDEVS Installation<a class="headerlink" href="#pypdevs-installation" title="Permalink to this headline">¶</a></h2>
+<p>Execute the following command in the &#8216;src&#8217; folder:</p>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py install --user
+</pre></div>
+</div>
+<p>Afterwards, PyPDEVS should be installed. This can easily be checked with the command:</p>
+<div class="highlight-python"><div class="highlight"><pre>python -c &quot;import pypdevs&quot;
+</pre></div>
+</div>
+<p>If this returns without errors, PyPDEVS is sucessfully installed.</p>
+</div>
+<div class="section" id="parallel-and-distributed-simulation-with-mpi4py">
+<h2>Parallel and distributed simulation with mpi4py<a class="headerlink" href="#parallel-and-distributed-simulation-with-mpi4py" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An installation script for mpi4py and MPICH3 is provided in <a class="reference download internal" href="downloads/install_mpi4py.sh"><code class="xref download docutils literal"><span class="pre">install_mpi4py.sh</span></code></a>. At the end, you will still need to add mpi to your PATH though, as explained by the script.</p>
+</div>
+<p>First of all, an MPI middleware has to be installed, for which I recommend MPICH3.
+Due to some non-standard configuration options, it is required to install MPICH manually instead of using the one from the repositories.</p>
+<p>You can use either the official installation guide, or follow the steps below.
+Just make sure that the correct configuration options are used.</p>
+<p>The following commands should work on most systems, just replace the &#8216;/home/you&#8217; part with a location of your choosing:</p>
+<div class="highlight-python"><div class="highlight"><pre>mkdir mpich-build
+mkdir mpich
+base=`pwd`
+cd mpich-build
+wget http://www.mpich.org/static/downloads/3.1.2/mpich-3.1.2.tar.gz
+tar -xvzf mpich-3.1.2.tar.gz
+cd mpich-3.1.2
+./configure --prefix=$base/mpich --with-device=ch3:sock --disable-fortran
+make
+make install
+export PATH=$base/mpich/bin:$PATH
+cd ../..
+</pre></div>
+</div>
+<p>You will probably want to put this final export of PATH to your .bashrc file, to make sure that mpi is found in new terminals too.
+After that, make sure that the following command does not cause any errors and simply prints your hostname 4 times:</p>
+<div class="highlight-python"><div class="highlight"><pre>mpirun -np 4 hostname
+</pre></div>
+</div>
+<p>Now you just need to install mpi4py, which is easy if you have MPICH installed correctly:</p>
+<div class="highlight-python"><div class="highlight"><pre>mkdir mpi4py
+cd mpi4py
+wget https://pypi.python.org/packages/source/m/mpi4py/mpi4py-1.3.1.tar.gz
+tar -xvzf mpi4py-1.3.1.tar.gz
+cd mpi4py-1.3.1
+python setup.py build --mpicc=../../mpich/bin/mpicc
+python setup.py install --user
+cd ../..
+</pre></div>
+</div>
+<p>Testing whether or not everything works can be done by making sure that the following command prints &#8216;4&#8217; four times:</p>
+<div class="highlight-python"><div class="highlight"><pre>mpirun -np 4 python -c &quot;from mpi4py import MPI; print(MPI.COMM_WORLD.Get_size())&quot;
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#pypdevs-installation">PyPDEVS Installation</a></li>
+<li><a class="reference internal" href="#parallel-and-distributed-simulation-with-mpi4py">Parallel and distributed simulation with mpi4py</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to PythonPDEVS&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="howto.html"
+                        title="next chapter">How to run PyPDEVS</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/installation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="howto.html" title="How to run PyPDEVS"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to PythonPDEVS’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

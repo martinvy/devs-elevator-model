@@ -1,0 +1,433 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AtomicDEVS &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="DEVS models" href="DEVS_int.html" />
+    <link rel="next" title="CoupledDEVS" href="CDEVS_int.html" />
+    <link rel="prev" title="BaseDEVS" href="BaseDEVS_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="CDEVS_int.html" title="CoupledDEVS"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="BaseDEVS_int.html" title="BaseDEVS"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="DEVS_int.html" accesskey="U">DEVS models</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="atomicdevs">
+<h1>AtomicDEVS<a class="headerlink" href="#atomicdevs" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="DEVS.AtomicDEVS">
+<em class="property">class </em><code class="descclassname">DEVS.</code><code class="descname">AtomicDEVS</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base class for all atomic-DEVS descriptive classes.</p>
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for an AtomicDEVS model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; name of the model, can be None to have an automatically generated name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.confTransition">
+<code class="descname">confTransition</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.confTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.confTransition" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT Confluent Transition Function.</p>
+<p>Accesses state and elapsed attributes, as well as inputs
+through the passed dictionary. Returns the new state.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Should only write to the <em>state</em> attribute.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> &#8211; dictionary containing all ports and their corresponding outputs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">state &#8211; the new state of the model</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.extTransition">
+<code class="descname">extTransition</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.extTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.extTransition" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT External Transition Function.</p>
+<p>Accesses state and elapsed attributes, as well as inputs
+through the passed dictionary. Returns the new state.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Should only write to the <em>state</em> attribute.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> &#8211; dictionary containing all ports and their corresponding outputs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">state &#8211; the new state of the model</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.fetchActivity">
+<code class="descname">fetchActivity</code><span class="sig-paren">(</span><em>time</em>, <em>activities</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.fetchActivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.fetchActivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the activity of the model up to a certain time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time</strong> &#8211; the time up to which the activity should be calculated</li>
+<li><strong>activities</strong> &#8211; dictionary containing all activities for the models</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><em>name</em>, <em>model_counter</em>, <em>model_ids</em>, <em>locations</em>, <em>select_hierarchy</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize the model hierarchy by doing all pre-simulation configuration</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Parameters <em>model_ids</em> and <em>locations</em> are updated by reference.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; the name of the hierarchy above</li>
+<li><strong>model_counter</strong> &#8211; the model ID counter</li>
+<li><strong>model_ids</strong> &#8211; a list with all model_ids and their model</li>
+<li><strong>locations</strong> &#8211; dictionary of locations and where every model runs</li>
+<li><strong>select_hierarchy</strong> &#8211; hierarchy to perform selections in Classic DEVS</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int &#8211; the new model ID counter</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.flattenConnections">
+<code class="descname">flattenConnections</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.flattenConnections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.flattenConnections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flattens the pickling graph, by removing backreference from the ports.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.getModelLoad">
+<code class="descname">getModelLoad</code><span class="sig-paren">(</span><em>lst</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.getModelLoad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.getModelLoad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add this atomic model to the load of its location</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lst</strong> &#8211; list containing all locations and their current load</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int &#8211; number of children in this subtree</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.getState">
+<code class="descname">getState</code><span class="sig-paren">(</span><em>request_time</em>, <em>first_call=True</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.getState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.getState" title="Permalink to this definition">¶</a></dt>
+<dd><p>For the distributed termination condition: fetch the state of the model at a certain time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>request_time</strong> &#8211; the time (including age!) for which the state should be fetched</li>
+<li><strong>first_call</strong> &#8211; whether or not this is the first call of a possible recursive call</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">state &#8211; the state at that time</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.intTransition">
+<code class="descname">intTransition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.intTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.intTransition" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT Internal Transition Function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Should only write to the <em>state</em> attribute.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">state &#8211; the new state of the model</td>
+</tr>
+</tbody>
+</table>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 2.1: </span>The <em>elapsed</em> attribute is no longer guaranteed to be correct as this isn&#8217;t required by the DEVS formalism.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.outputFnc">
+<code class="descname">outputFnc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.outputFnc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.outputFnc" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT Output Function.</p>
+<p>Accesses only state attribute. Returns the output on the different ports as a dictionary.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Should <strong>not</strong> write to any attribute.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary containing output ports as keys and lists of output on that port as value</td>
+</tr>
+</tbody>
+</table>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 2.1: </span>The <em>elapsed</em> attribute is no longer guaranteed to be correct as this isn&#8217;t required by the DEVS formalism.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.postActivityCalculation">
+<code class="descname">postActivityCalculation</code><span class="sig-paren">(</span><em>prevalue</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.postActivityCalculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.postActivityCalculation" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT post-transition activity fetcher. The returned value will be passed on to the relocator and MUST be an addable (e.g. integer, float, ...)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prevalue</strong> &#8211; the value returned from the <em>preActivityCalculation</em> method</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">addable (float, integer, ...) &#8211; passed to the relocator</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.preActivityCalculation">
+<code class="descname">preActivityCalculation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.preActivityCalculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.preActivityCalculation" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT pre-transition activity fetcher. The returned value is passed to the <em>postActivityCalculation</em> function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">something &#8211; passed to the <em>postActivityCalculation</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.revert">
+<code class="descname">revert</code><span class="sig-paren">(</span><em>time</em>, <em>memorize</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.revert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.revert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Revert the model to the specified time. All necessary cleanup for this
+model will be done (fossil collection).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time</strong> &#8211; the time up to which should be reverted</li>
+<li><strong>memorize</strong> &#8211; whether or not the saved states should still be kept for memoization</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.setGVT">
+<code class="descname">setGVT</code><span class="sig-paren">(</span><em>gvt</em>, <em>activities</em>, <em>last_state_only</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.setGVT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.setGVT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the GVT of the model, cleaning up the states vector as required
+for the time warp algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>gvt</strong> &#8211; the new value of the GVT</li>
+<li><strong>activities</strong> &#8211; dictionary containing all activities for the models</li>
+<li><strong>last_state_only</strong> &#8211; whether or not to only use a single state for activity</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.setLocation">
+<code class="descname">setLocation</code><span class="sig-paren">(</span><em>location</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.setLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.setLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the location of the atomic DEVS model if it was not already set</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>location</strong> &#8211; the location to set</li>
+<li><strong>force</strong> &#8211; whether or not to force this location, even if another is already defined</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.timeAdvance">
+<code class="descname">timeAdvance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.timeAdvance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.timeAdvance" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEFAULT Time Advance Function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Should ideally be deterministic, though this is not mandatory for simulation.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the time advance of the model</td>
+</tr>
+</tbody>
+</table>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 2.1: </span>The <em>elapsed</em> attribute is no longer guaranteed to be correct as this isn&#8217;t required by the DEVS formalism.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="DEVS.AtomicDEVS.unflattenConnections">
+<code class="descname">unflattenConnections</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/DEVS.html#AtomicDEVS.unflattenConnections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#DEVS.AtomicDEVS.unflattenConnections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unflattens the picking graph, by reconstructing backreferences from the ports.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="BaseDEVS_int.html"
+                        title="previous chapter">BaseDEVS</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="CDEVS_int.html"
+                        title="next chapter">CoupledDEVS</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/ADEVS_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="CDEVS_int.html" title="CoupledDEVS"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="BaseDEVS_int.html" title="BaseDEVS"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="DEVS_int.html" >DEVS models</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

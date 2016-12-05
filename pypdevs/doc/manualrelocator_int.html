@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Manual Relocator &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Relocators" href="relocators_int.html" />
+    <link rel="next" title="Boundary Relocator" href="boundaryrelocator_int.html" />
+    <link rel="prev" title="Relocators" href="relocators_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="boundaryrelocator_int.html" title="Boundary Relocator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="relocators_int.html" title="Relocators"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="relocators_int.html" accesskey="U">Relocators</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-relocators.manualRelocator">
+<span id="manual-relocator"></span><h1>Manual Relocator<a class="headerlink" href="#module-relocators.manualRelocator" title="Permalink to this headline">¶</a></h1>
+<p>Relocator for user-provided relocation directives</p>
+<dl class="class">
+<dt id="relocators.manualRelocator.ManualRelocator">
+<em class="property">class </em><code class="descclassname">relocators.manualRelocator.</code><code class="descname">ManualRelocator</code><a class="reference internal" href="modules/relocators/manualRelocator.html#ManualRelocator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#relocators.manualRelocator.ManualRelocator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main class</p>
+<dl class="method">
+<dt id="relocators.manualRelocator.ManualRelocator.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/relocators/manualRelocator.html#ManualRelocator.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#relocators.manualRelocator.ManualRelocator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the relocator</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="relocators.manualRelocator.ManualRelocator.addDirective">
+<code class="descname">addDirective</code><span class="sig-paren">(</span><em>time</em>, <em>model</em>, <em>destination</em><span class="sig-paren">)</span><a class="reference internal" href="modules/relocators/manualRelocator.html#ManualRelocator.addDirective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#relocators.manualRelocator.ManualRelocator.addDirective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a relocation directive, this relocation will be scheduled and will be executed as soon as the GVT passes over the provided time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time</strong> &#8211; the time at which this should happen</li>
+<li><strong>model</strong> &#8211; the model that has to be moved (its model_id)</li>
+<li><strong>destination</strong> &#8211; the destination kernel to move it to</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="relocators.manualRelocator.ManualRelocator.getRelocations">
+<code class="descname">getRelocations</code><span class="sig-paren">(</span><em>gvt</em>, <em>activities</em>, <em>horizon</em><span class="sig-paren">)</span><a class="reference internal" href="modules/relocators/manualRelocator.html#ManualRelocator.getRelocations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#relocators.manualRelocator.ManualRelocator.getRelocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the relocations that are pending for the current GVT</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gvt</strong> &#8211; current GVT</li>
+<li><strong>activities</strong> &#8211; the activities being passed on the GVT ring</li>
+<li><strong>horizon</strong> &#8211; the activity horizon that was used</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dictionary containing all relocations</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="relocators.manualRelocator.ManualRelocator.setController">
+<code class="descname">setController</code><span class="sig-paren">(</span><em>controller</em><span class="sig-paren">)</span><a class="reference internal" href="modules/relocators/manualRelocator.html#ManualRelocator.setController"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#relocators.manualRelocator.ManualRelocator.setController" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the controller</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="relocators.manualRelocator.ManualRelocator.useLastStateOnly">
+<code class="descname">useLastStateOnly</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/relocators/manualRelocator.html#ManualRelocator.useLastStateOnly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#relocators.manualRelocator.ManualRelocator.useLastStateOnly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether or not the activities of all steps should be accumulated, or only a single state should be used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean &#8211; True if the relocator works with a single state</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="relocators_int.html"
+                        title="previous chapter">Relocators</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="boundaryrelocator_int.html"
+                        title="next chapter">Boundary Relocator</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/manualrelocator_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="boundaryrelocator_int.html" title="Boundary Relocator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="relocators_int.html" title="Relocators"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li>
+          <li><a href="relocators_int.html" >Relocators</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

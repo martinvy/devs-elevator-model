@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tracers.tracerVCD &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tracers.tracerVCD</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2014 Modelling, Simulation and Design Lab (MSDL) at </span>
+<span class="c"># McGill University and the University of Antwerp (http://msdl.cs.mcgill.ca/)</span>
+<span class="c"># </span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c">#</span>
+<span class="c">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c">#</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+
+<span class="kn">from</span> <span class="nn">pypdevs.util</span> <span class="kn">import</span> <span class="n">runTraceAtController</span><span class="p">,</span> <span class="n">toStr</span><span class="p">,</span> <span class="n">DEVSException</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">floor</span>
+
+<span class="k">class</span> <span class="nc">VCDRecord</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A data class to keep information about VCD variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier_nr</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">port_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param identifier_nr: the actual identifier</span>
+<span class="sd">        :param model_name: name of the model</span>
+<span class="sd">        :param port_name: name of the port</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port_name</span> <span class="o">=</span> <span class="n">port_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier_nr</span>
+        <span class="c"># BitSize cannot be given since there is no event created on this wire</span>
+        <span class="c"># Set to None to make sure that it will be changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bit_size</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="TracerVCD"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD">[docs]</a><span class="k">class</span> <span class="nc">TracerVCD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A tracer for VCD output. Should only be used for binary signals!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TracerVCD.__init__"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param uid: the UID of the tracer</span>
+<span class="sd">        :param server: the server to make remote requests on</span>
+<span class="sd">        :param filename: file to save the trace to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">server</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.startTracer"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.startTracer">[docs]</a>    <span class="k">def</span> <span class="nf">startTracer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recover</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts up the tracer</span>
+
+<span class="sd">        :param recover: whether or not this is a recovery call (so whether or not the file should be appended to)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Nothing to do here as we aren&#39;t the controller</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="n">recover</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;a+&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_prevtime</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcdHeader</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.stopTracer"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.stopTracer">[docs]</a>    <span class="k">def</span> <span class="nf">stopTracer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop the tracer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.vcdHeader"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.vcdHeader">[docs]</a>    <span class="k">def</span> <span class="nf">vcdHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the VCD file header by doing calls to the coordinator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;$date</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;$end</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;$version</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;</span><span class="se">\t</span><span class="s">PyDEVS VCD export</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;$end</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;$comment</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;</span><span class="se">\t</span><span class="s">Generated from DEVS-code</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;$end</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                            <span class="s">&quot;$timescale 1ns $end</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">getProxy</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">getVCDVariables</span><span class="p">()</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VCDRecord</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">modelList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modelList</span><span class="p">:</span>
+                <span class="n">modelList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modelList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;$scope </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> $end</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">module</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="n">module</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;$var wire &quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">bitsize</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bitsize</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot; </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> $end</span><span class="se">\n</span><span class="s">&quot;</span> 
+                            <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> 
+                               <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">port_name</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;$upscope $end</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;$enddefinitions $end</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;$dumpvars </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c"># The wire is a constant error signal, so the wire is never used</span>
+                <span class="c"># Assume 1 bit long</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;z&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;z&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot; </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;$end</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.trace"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">port_name</span><span class="p">,</span> <span class="n">vcd_state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trace a VCD entry</span>
+
+<span class="sd">        :param model_name: name of the model</span>
+<span class="sd">        :param time: time at which transition happened</span>
+<span class="sd">        :param port_name: name of the port</span>
+<span class="sd">        :param vcd_state: state to trace on the specified port</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Check if the signal is a valid binary signal</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vcd_state</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">vcd_state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;b&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">DEVSException</span><span class="p">((</span><span class="s">&quot;Port </span><span class="si">%s</span><span class="s"> in model does not carry &quot;</span> <span class="o">+</span>
+                                        <span class="s">&quot;a binary signal</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                                        <span class="s">&quot;VCD exports require a binary signal,&quot;</span> <span class="o">+</span>
+                                        <span class="s">&quot;not: &quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">port_name</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">vcd_state</span><span class="p">))</span>
+            <span class="n">char</span> <span class="o">=</span> <span class="n">vcd_state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;0&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;E&quot;</span><span class="p">,</span> <span class="s">&quot;x&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">DEVSException</span><span class="p">((</span><span class="s">&quot;Port </span><span class="si">%s</span><span class="s"> in model does not carry &quot;</span> <span class="o">+</span>
+                                     <span class="s">&quot;a binary signal</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                                     <span class="s">&quot;VCD exports require a binary signal,&quot;</span> <span class="o">+</span>
+                                     <span class="s">&quot;not: &quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">port_name</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">vcd_state</span><span class="p">))</span>
+        <span class="c"># Find the identifier of this wire</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="n">model_name</span> <span class="ow">and</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">port_name</span> <span class="o">==</span> <span class="n">port_name</span><span class="p">):</span>
+                <span class="n">identifier</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="c"># If the bit_size is not yet defined, define it now</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vcd_state</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_size</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vcd_state</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DEVSException</span><span class="p">(</span><span class="s">&quot;Wire has changing bitsize!</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
+                                    <span class="s">&quot;You are probably not using bit encoding!&quot;</span><span class="p">)</span>
+            <span class="c"># Now we have to convert between logisim and VCD notation</span>
+            <span class="n">vcd_state</span> <span class="o">=</span> <span class="n">vcd_state</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">)</span>
+            <span class="n">vcd_state</span> <span class="o">=</span> <span class="n">vcd_state</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;E&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
+            <span class="c"># identifier will be defined, otherwise the record was not in the list</span>
+            <span class="k">if</span> <span class="n">time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcd_prevtime</span><span class="p">:</span>
+                <span class="c"># Convert float to integer without losing precision</span>
+                <span class="c"># ex. 5.0 --&gt; 50, 5.5 --&gt; 55</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">vcd_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span> <span class="o">+</span> 
+                          <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">floor</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)))</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcd_prevtime</span> <span class="o">!=</span> <span class="n">vcd_time</span><span class="p">):</span>
+                <span class="c"># The time has passed, so add a new VCD header</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&quot;#&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">vcd_time</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vcd_prevtime</span> <span class="o">=</span> <span class="n">vcd_time</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcd_file</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">vcd_state</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">identifier</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.traceConfluent"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.traceConfluent">[docs]</a>    <span class="k">def</span> <span class="nf">traceConfluent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aDEVS</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The trace functionality for VCD output at a confluent transition</span>
+
+<span class="sd">        :param aDEVS: the model that transitioned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">toStr</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">getModelFullName</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">IPorts</span><span class="p">)):</span>
+            <span class="n">port_name</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">IPorts</span><span class="p">[</span><span class="n">I</span><span class="p">]</span><span class="o">.</span><span class="n">getPortName</span><span class="p">()</span>
+            <span class="n">signal_bag</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">IPorts</span><span class="p">[</span><span class="n">I</span><span class="p">],</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="n">signal_bag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">port_signal</span> <span class="ow">in</span> <span class="n">signal_bag</span><span class="p">:</span>
+                    <span class="n">runTraceAtController</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> 
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> 
+                                         <span class="n">aDEVS</span><span class="p">,</span> 
+                                         <span class="p">[</span><span class="n">name</span><span class="p">,</span> 
+                                            <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span><span class="p">,</span> 
+                                            <span class="n">toStr</span><span class="p">(</span><span class="n">port_name</span><span class="p">),</span> 
+                                            <span class="n">toStr</span><span class="p">(</span><span class="n">port_signal</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">)</span> <span class="p">):</span>
+            <span class="k">if</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="ow">in</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_output</span><span class="p">:</span>
+                <span class="n">port_name</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">[</span><span class="n">I</span><span class="p">]</span><span class="o">.</span><span class="n">getPortName</span><span class="p">()</span>
+                <span class="n">signal_bag</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">[</span><span class="n">I</span><span class="p">],</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="n">signal_bag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">port_signal</span> <span class="ow">in</span> <span class="n">signal_bag</span><span class="p">:</span>
+                        <span class="n">runTraceAtController</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> 
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> 
+                                             <span class="n">aDEVS</span><span class="p">,</span> 
+                                             <span class="p">[</span><span class="n">name</span><span class="p">,</span> 
+                                                <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span><span class="p">,</span> 
+                                                <span class="n">toStr</span><span class="p">(</span><span class="n">port_name</span><span class="p">),</span> 
+                                                <span class="n">toStr</span><span class="p">(</span><span class="n">port_signal</span><span class="p">)])</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.traceInternal"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.traceInternal">[docs]</a>    <span class="k">def</span> <span class="nf">traceInternal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aDEVS</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The trace functionality for VCD output at an internal transition</span>
+
+<span class="sd">        :param aDEVS: the model that transitioned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">toStr</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">getModelFullName</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">)</span> <span class="p">):</span>
+            <span class="k">if</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="ow">in</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_output</span><span class="p">:</span>
+                <span class="n">port_name</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">[</span><span class="n">I</span><span class="p">]</span><span class="o">.</span><span class="n">getPortName</span><span class="p">()</span>
+                <span class="n">signal_bag</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">OPorts</span><span class="p">[</span><span class="n">I</span><span class="p">],</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="n">signal_bag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">port_signal</span> <span class="ow">in</span> <span class="n">signal_bag</span><span class="p">:</span>
+                        <span class="n">runTraceAtController</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> 
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> 
+                                             <span class="n">aDEVS</span><span class="p">,</span> 
+                                             <span class="p">[</span><span class="n">name</span><span class="p">,</span> 
+                                                <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span><span class="p">,</span> 
+                                                <span class="n">toStr</span><span class="p">(</span><span class="n">port_name</span><span class="p">),</span> 
+                                                <span class="n">toStr</span><span class="p">(</span><span class="n">port_signal</span><span class="p">)])</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.traceExternal"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.traceExternal">[docs]</a>    <span class="k">def</span> <span class="nf">traceExternal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aDEVS</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The trace functionality for VCD output at an external transition</span>
+
+<span class="sd">        :param aDEVS: the model that transitioned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">toStr</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">getModelFullName</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">IPorts</span><span class="p">)):</span>
+            <span class="n">port_name</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">IPorts</span><span class="p">[</span><span class="n">I</span><span class="p">]</span><span class="o">.</span><span class="n">getPortName</span><span class="p">()</span>
+            <span class="n">signal_bag</span> <span class="o">=</span> <span class="n">aDEVS</span><span class="o">.</span><span class="n">my_input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aDEVS</span><span class="o">.</span><span class="n">IPorts</span><span class="p">[</span><span class="n">I</span><span class="p">],</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="n">signal_bag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">port_signal</span> <span class="ow">in</span> <span class="n">signal_bag</span><span class="p">:</span>
+                    <span class="n">runTraceAtController</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> 
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> 
+                                         <span class="n">aDEVS</span><span class="p">,</span> 
+                                         <span class="p">[</span><span class="n">name</span><span class="p">,</span> 
+                                            <span class="n">aDEVS</span><span class="o">.</span><span class="n">time_last</span><span class="p">,</span> 
+                                            <span class="n">toStr</span><span class="p">(</span><span class="n">port_name</span><span class="p">),</span> 
+                                            <span class="n">toStr</span><span class="p">(</span><span class="n">port_signal</span><span class="p">)])</span>
+</div>
+<div class="viewcode-block" id="TracerVCD.traceInit"><a class="viewcode-back" href="../../tracervcd_int.html#tracers.tracerVCD.TracerVCD.traceInit">[docs]</a>    <span class="k">def</span> <span class="nf">traceInit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aDEVS</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The trace functionality for VCD output at initialisation</span>
+
+<span class="sd">        :param aDEVS: the model that was initialized</span>
+<span class="sd">        :param t: time at which it should be traced</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>

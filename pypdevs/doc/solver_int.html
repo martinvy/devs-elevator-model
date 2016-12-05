@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DEVS Solver &mdash; PythonPDEVS 2.3.1 documentation</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="PythonPDEVS 2.3.1 documentation" href="index.html" />
+    <link rel="up" title="Internal documentation" href="internal.html" />
+    <link rel="next" title="State Savers" href="statesavers_int.html" />
+    <link rel="prev" title="Simulator Configuration" href="simconfig_int.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="statesavers_int.html" title="State Savers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="simconfig_int.html" title="Simulator Configuration"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" accesskey="U">Internal documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-solver">
+<span id="devs-solver"></span><h1>DEVS Solver<a class="headerlink" href="#module-solver" title="Permalink to this headline">¶</a></h1>
+<p>The actual DEVS solvers containing the main DEVS implementation</p>
+<dl class="class">
+<dt id="solver.Solver">
+<em class="property">class </em><code class="descclassname">solver.</code><code class="descname">Solver</code><a class="reference internal" href="modules/solver.html#Solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unified DEVS solver, containing all necessary functions</p>
+<dl class="method">
+<dt id="solver.Solver.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.atomicInit">
+<code class="descname">atomicInit</code><span class="sig-paren">(</span><em>aDEVS</em>, <em>time</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.atomicInit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.atomicInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>AtomicDEVS function to initialise the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDEVS</strong> &#8211; the model to initialise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.atomicOutputGeneration">
+<code class="descname">atomicOutputGeneration</code><span class="sig-paren">(</span><em>aDEVS</em>, <em>time</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.atomicOutputGeneration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.atomicOutputGeneration" title="Permalink to this definition">¶</a></dt>
+<dd><p>AtomicDEVS function to generate output, invokes the outputFnc function of the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>aDEVS</strong> &#8211; the AtomicDEVS model that generates the output</li>
+<li><strong>time</strong> &#8211; the time at which the output must be generated</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict &#8211; the generated output</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.atomicOutputGenerationEventTracing">
+<code class="descname">atomicOutputGenerationEventTracing</code><span class="sig-paren">(</span><em>aDEVS</em>, <em>time</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.atomicOutputGenerationEventTracing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.atomicOutputGenerationEventTracing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for the AtomicDEVS output function, which will save event counts</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>aDEVS</strong> &#8211; the AtomicDEVS model that generates the output</li>
+<li><strong>time</strong> &#8211; the time at which the output must be generated</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict &#8211; the generated output</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.coupledInit">
+<code class="descname">coupledInit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.coupledInit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.coupledInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>CoupledDEVS function to initialise the model, calls all its _local_ children too.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.coupledOutputGeneration">
+<code class="descname">coupledOutputGeneration</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.coupledOutputGeneration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.coupledOutputGeneration" title="Permalink to this definition">¶</a></dt>
+<dd><p>CoupledDEVS function to generate the output, calls the atomicDEVS models where necessary. Output is routed too.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time</strong> &#8211; the time at which output should be generated</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the models that should be rescheduled</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.coupledOutputGenerationClassic">
+<code class="descname">coupledOutputGenerationClassic</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.coupledOutputGenerationClassic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.coupledOutputGenerationClassic" title="Permalink to this definition">¶</a></dt>
+<dd><p>CoupledDEVS function to generate the output, calls the atomicDEVS models where necessary. Output is routed too.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time</strong> &#8211; the time at which output should be generated</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the models that should be rescheduled</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.massAtomicTransitions">
+<code class="descname">massAtomicTransitions</code><span class="sig-paren">(</span><em>trans</em>, <em>clock</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.massAtomicTransitions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.massAtomicTransitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>AtomicDEVS function to perform all necessary transitions, 
+does so on a collection of models for performance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trans</strong> &#8211; iterable containing all models and their requested transition</li>
+<li><strong>clock</strong> &#8211; the time at which the transition must happen</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Solver.performDSDEVS">
+<code class="descname">performDSDEVS</code><span class="sig-paren">(</span><em>transitioning</em><span class="sig-paren">)</span><a class="reference internal" href="modules/solver.html#Solver.performDSDEVS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#solver.Solver.performDSDEVS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform Dynamic Structure detection of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>transitioning</strong> &#8211; iteratable to be checked for a dynamic structure transiton</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="simconfig_int.html"
+                        title="previous chapter">Simulator Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="statesavers_int.html"
+                        title="next chapter">State Savers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/solver_int.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="statesavers_int.html" title="State Savers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="simconfig_int.html" title="Simulator Configuration"
+             >previous</a> |</li>
+        <li><a href="index.html">PythonPDEVS 2.3.1 documentation</a> &raquo;</li>
+          <li><a href="internal.html" >Internal documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Yentl Van Tendeloo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3a0.
+    </div>
+  </body>
+</html>
