@@ -93,6 +93,10 @@ class ElevatorGO(AtomicDEVS):
 
         next_stop = inputs.get(self.inport_go)
         if next_stop:
+            # external transition from simulation interrupt is list for some reason
+            if isinstance(next_stop, list):
+                next_stop = int(next_stop[0])
+
             if self.state == "IDLE":
                 if next_stop == self.current_floor:
                     pass
@@ -107,7 +111,7 @@ class ElevatorGO(AtomicDEVS):
 
 
 class RandomRequest(AtomicDEVS):
-    REQUEST_INTERVAL = 19
+    REQUEST_INTERVAL = 30
 
     def __init__(self, api):
         super().__init__("Request")
