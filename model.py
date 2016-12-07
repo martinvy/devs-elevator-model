@@ -56,6 +56,8 @@ class ElevatorGO(AtomicDEVS):
         super().__init__("ElevatorGO")
         self.api = api
         self.inport_go = self.addInPort("inport_go")
+        self.inport_go_external_up = self.addInPort("inport_go_external_up")
+        self.inport_go_external_down = self.addInPort("inport_go_external_down")
         self.inport_floor_update = self.addInPort("inport_floor_update")
         self.outport_updown_request = self.addOutPort("outport_updown_request")
         self.state = "IDLE"
@@ -119,6 +121,7 @@ class ElevatorGO(AtomicDEVS):
     def extTransition(self, inputs):
         logger.info("GO Ext: %s", inputs.values())
 
+        # floor update (from Elevator)
         floor = inputs.get(self.inport_floor_update)
         if floor is not None:
             self.current_floor = floor
@@ -128,22 +131,58 @@ class ElevatorGO(AtomicDEVS):
                 assert self.state == "GOING"
                 self.state = "GO"
 
+        # go request (internal button)
         next_stop = inputs.get(self.inport_go)
         if next_stop is not None:
-            # external transition from simulation interrupt is list for some reason
-            if isinstance(next_stop, list):
-                next_stop = int(next_stop[0])
+            next_stop = self.cast_from_interrupt(next_stop)
 
             if self.state == "IDLE":
-                if next_stop == self.current_floor:
-                    self.state = "OPEN"
-                else:
-                    self.state = "GO"
-                    self.next_stop = next_stop
+                self.move(next_stop)
             else:
                 logger.info("GO queued %s", next_stop)
                 self.request_queue.append(next_stop)
+
+        # go request UP (external button)
+        next_stop = inputs.get(self.inport_go_external_up)
+        if next_stop is not None:
+            next_stop = self.cast_from_interrupt(next_stop)
+
+            if self.state == "IDLE":
+                self.move(next_stop)
+            else:
+                if self.elevator_is_rising():
+                    logger.info("GO original dest floor queued %s", next_stop)
+                    self.request_queue.append(self.next_stop)
+                    self.next_stop = next_stop
+
+        # go request UP (external button)
+        next_stop = inputs.get(self.inport_go_external_down)
+        if next_stop is not None:
+            next_stop = self.cast_from_interrupt(next_stop)
+
+            if self.state == "IDLE":
+                self.move(next_stop)
+            else:
+                if self.elevator_is_dropping():
+                    logger.info("GO original dest floor queued %s", next_stop)
+                    self.request_queue.append(self.next_stop)
+                    self.next_stop = next_stop
+
+        self.api.update_request_queue(self.request_queue)
         return self.state
+
+    def elevator_is_rising(self):
+        return self.next_stop > self.current_floor
+
+    def elevator_is_dropping(self):
+        return self.next_stop < self.current_floor
+
+    @staticmethod
+    def cast_from_interrupt(var):
+        """ External transition from simulation interrupt is list for some reason """
+        if isinstance(var, list):
+            return int(var[0])
+        return var
 
     def move(self, next_stop):
         logger.info("GO move %s", next_stop)
@@ -245,6 +284,10 @@ class Model(CoupledDEVS):
         self.connectPorts(self.elevator_go.outport_updown_request, self.elevator.inport)
         self.connectPorts(self.elevator.outport, self.elevator_go.inport_floor_update)
         self.connectPorts(self.request.outport, self.elevator_go.inport_go)
+
+    def select(self, imm_children):
+        """ On conflict prefer trasition on ElevatorGO """
+        return imm_children[1]
 
 
 if __name__ == "__main__":

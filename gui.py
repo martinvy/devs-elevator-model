@@ -15,7 +15,7 @@ class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Elevator DEVS model")
-        self.window.geometry("900x640")
+        self.window.geometry("860x640")
         self.window.minsize(width=500, height=500)
         self.frame = tk.Frame(self.window)
         self.frame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
@@ -35,6 +35,7 @@ class App:
         self.floor_buttons_up, self.floor_buttons_down, self.buttons, self.floors, self.floors_info = self.create_floors()
         self.update_floor(0)  # set floor #0 as initial
         self.bottom_label = tk.Label(self.frame, text="=======", background=self.BACKGROUND)
+        self.request_queue_label = tk.Label(self.frame, "", background=self.BACKGROUND)
 
         self.time = 0
         canvas = tk.Canvas(self.right_frame, width=600, height=600, scrollregion=(0, 0, 2000, 2000))
@@ -86,33 +87,37 @@ class App:
         self.frame.rowconfigure(0, pad=10)
 
         # layout of widgets
-        self.top_label_time.grid(row=0, column=0, columnspan=2)
-        self.top_label_title.grid(row=0, column=2)
-        self.bottom_label.grid(row=NUMBER_OF_FLOORS + 1, column=2)
+        self.top_label_time.grid(row=0, column=0, columnspan=3)
+        self.top_label_title.grid(row=0, column=3)
+        self.bottom_label.grid(row=NUMBER_OF_FLOORS + 1, column=3)
+        self.request_queue_label.grid(row=NUMBER_OF_FLOORS + 2, column=0, columnspan=4)
 
         self.simulator = None
 
     def create_floors(self):
         floor_buttons_up, floor_buttons_down, buttons, floors, floors_info = {}, {}, {}, {}, {}
         for floor in range(NUMBER_OF_FLOORS):
+            label = tk.Label(self.frame, text=str(floor), background=self.BACKGROUND)
+            label.grid(row=NUMBER_OF_FLOORS - floor, column=0)
+
             button = tk.Button(self.frame, text="↑", background=self.BACKGROUND, command=partial(self.go_floor_external_up, floor), padx=1)
-            button.grid(row=NUMBER_OF_FLOORS - floor, column=0, sticky=tk.W)
+            button.grid(row=NUMBER_OF_FLOORS - floor, column=1, sticky=tk.W)
             floor_buttons_up[floor] = button
 
             button = tk.Button(self.frame, text="↓", background=self.BACKGROUND, command=partial(self.go_floor_external_down, floor), padx=1)
-            button.grid(row=NUMBER_OF_FLOORS - floor, column=1, sticky=tk.W)
+            button.grid(row=NUMBER_OF_FLOORS - floor, column=2, sticky=tk.W)
             floor_buttons_down[floor] = button
 
             label = tk.Label(self.frame, text="", background=self.BACKGROUND)
-            label.grid(row=NUMBER_OF_FLOORS - floor, column=2)
+            label.grid(row=NUMBER_OF_FLOORS - floor, column=3)
             floors[floor] = label
 
             button = tk.Button(self.frame, text="O", background=self.BACKGROUND, command=partial(self.go_floor, floor))
-            button.grid(row=NUMBER_OF_FLOORS - floor, column=3)
+            button.grid(row=NUMBER_OF_FLOORS - floor, column=4)
             buttons[floor] = button
 
             label = tk.Label(self.frame, text="", background=self.BACKGROUND)
-            label.grid(row=NUMBER_OF_FLOORS - floor, column=4)
+            label.grid(row=NUMBER_OF_FLOORS - floor, column=5)
             floors_info[floor] = label
 
         return floor_buttons_up, floor_buttons_down, buttons, floors, floors_info
@@ -124,10 +129,10 @@ class App:
         self.simulator.realtime_interrupt("inport_go %s" % floor)
 
     def go_floor_external_up(self, floor):
-        self.simulator.realtime_interrupt("inport_go %s" % floor)
+        self.simulator.realtime_interrupt("inport_go_external_up %s" % floor)
 
     def go_floor_external_down(self, floor):
-        self.simulator.realtime_interrupt("inport_go %s" % floor)
+        self.simulator.realtime_interrupt("inport_go_external_down %s" % floor)
 
     def update_floor(self, new_floor: int):
         self.current_floor = new_floor
@@ -168,6 +173,9 @@ class App:
         self.floors_info[new_floor]["text"] = "x"
         self.buttons[new_floor].config(state=tk.DISABLED, background="orange")
 
+    def update_request_queue(self, request_queue):
+        self.request_queue_label["text"] = str(request_queue)
+
 
 if __name__ == "__main__":
     app = App()
@@ -179,7 +187,11 @@ if __name__ == "__main__":
     sim.setDrawModel()
 
     sim.setRealTime(True, scale=SIMULATION_REAL_TIME_SCALE)
-    sim.setRealTimePorts({"inport_go": model.elevator_go.inport_go})
+    sim.setRealTimePorts({
+        "inport_go": model.elevator_go.inport_go,
+        "inport_go_external_up": model.elevator_go.inport_go_external_up,
+        "inport_go_external_down": model.elevator_go.inport_go_external_down
+    })
 
     t = threading.Thread(target=sim.simulate)
     t.daemon = True
