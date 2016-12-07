@@ -32,17 +32,17 @@ class Elevator(AtomicDEVS):
             return self.MOVE_TIME
 
     def outputFnc(self):
-        logger.info("Out: %s", self.floor)
+        logger.info("EL Out: %s", self.floor)
         self.api.update_floor(self.floor)
         return {self.outport: self.floor}
 
     def intTransition(self):
-        logger.info("Int: %s", self.floor)
+        logger.info("EL Int: %s", self.floor)
         self.state = "IDLE"
         return self.state
 
     def extTransition(self, inputs):
-        logger.info("Ext: %s", inputs.values())
+        logger.info("EL Ext: %s", inputs.values())
         self.state = inputs[self.inport]
         if self.state == "UP":
             self.floor = self.floor + 1 if self.floor < NUMBER_OF_FLOORS else self.floor
@@ -70,17 +70,17 @@ class ElevatorGO(AtomicDEVS):
             return 0
 
     def outputFnc(self):
-        logger.info("Out: %s -> %s", self.current_floor, self.next_stop)
+        logger.info("GO Out: %s -> %s", self.current_floor, self.next_stop)
         direction = "UP" if self.next_stop > self.current_floor else "DOWN"
         return {self.outport: direction}
 
     def intTransition(self):
-        logger.info("Int: %s", self.current_floor)
+        logger.info("GO Int: %s", self.current_floor)
         self.state = "IDLE"
         return self.state
 
     def extTransition(self, inputs):
-        logger.info("Ext: %s", inputs.values())
+        logger.info("GO Ext: %s", inputs.values())
 
         floor = inputs.get(self.inport_floor)
         if floor:
