@@ -15,7 +15,7 @@ class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Elevator DEVS model")
-        self.window.geometry("800x640")
+        self.window.geometry("900x640")
         self.window.minsize(width=500, height=500)
         self.frame = tk.Frame(self.window)
         self.frame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
@@ -30,11 +30,11 @@ class App:
         tk.Grid.columnconfigure(self.window, 0, weight=1)
 
         # widgets
-        self.top_label = tk.Label(self.frame, text="Elevator", background=self.BACKGROUND)
         self.top_label_time = tk.Label(self.frame, text=0, background=self.BACKGROUND)
-        self.buttons, self.floors, self.floors_info = self.create_floors()
+        self.top_label_title = tk.Label(self.frame, text="Elevator", background=self.BACKGROUND)
+        self.floor_buttons_up, self.floor_buttons_down, self.buttons, self.floors, self.floors_info = self.create_floors()
         self.update_floor(0)  # set floor #0 as initial
-        self.bottom_label = tk.Label(self.frame, text="====", background=self.BACKGROUND)
+        self.bottom_label = tk.Label(self.frame, text="=======", background=self.BACKGROUND)
 
         self.time = 0
         canvas = tk.Canvas(self.right_frame, width=600, height=600, scrollregion=(0, 0, 2000, 2000))
@@ -53,7 +53,7 @@ class App:
 
         def update_time():
             self.time += 1
-            if self.current_floor:
+            if self.current_floor is not None:
                 canvas.create_line(
                     self.time,
                     100,
@@ -69,7 +69,7 @@ class App:
                     self.floors_info[self.current_floor]["text"] = text
                     self.top_label_time["text"] += 1
 
-            if self.destination_floor:
+            if self.destination_floor is not None:
                 canvas.create_line(
                     self.time,
                     200,
@@ -86,33 +86,47 @@ class App:
         self.frame.rowconfigure(0, pad=10)
 
         # layout of widgets
-        self.top_label.grid(row=0, column=0)
-        self.top_label_time.grid(row=0, column=1)
-        self.bottom_label.grid(row=NUMBER_OF_FLOORS + 1, column=0)
+        self.top_label_time.grid(row=0, column=0, columnspan=2)
+        self.top_label_title.grid(row=0, column=2)
+        self.bottom_label.grid(row=NUMBER_OF_FLOORS + 1, column=2)
 
         self.simulator = None
 
     def create_floors(self):
-        buttons, floors, floors_info = {}, {}, {}
+        floor_buttons_up, floor_buttons_down, buttons, floors, floors_info = {}, {}, {}, {}, {}
         for floor in range(NUMBER_OF_FLOORS):
-            label = tk.Label(self.frame, text="", background=self.BACKGROUND)
-            label.grid(row=NUMBER_OF_FLOORS - floor, column=0)
-            floors[floor] = label
+            button = tk.Button(self.frame, text="↑", background=self.BACKGROUND, command=partial(self.go_floor_external_up, floor), padx=1)
+            button.grid(row=NUMBER_OF_FLOORS - floor, column=0, sticky=tk.W)
+            floor_buttons_up[floor] = button
 
-            button = tk.Button(self.frame, text="O", background=self.BACKGROUND, command=partial(self.go_floor, floor))
-            button.grid(row=NUMBER_OF_FLOORS - floor, column=1)
-            buttons[floor] = button
+            button = tk.Button(self.frame, text="↓", background=self.BACKGROUND, command=partial(self.go_floor_external_down, floor), padx=1)
+            button.grid(row=NUMBER_OF_FLOORS - floor, column=1, sticky=tk.W)
+            floor_buttons_down[floor] = button
 
             label = tk.Label(self.frame, text="", background=self.BACKGROUND)
             label.grid(row=NUMBER_OF_FLOORS - floor, column=2)
+            floors[floor] = label
+
+            button = tk.Button(self.frame, text="O", background=self.BACKGROUND, command=partial(self.go_floor, floor))
+            button.grid(row=NUMBER_OF_FLOORS - floor, column=3)
+            buttons[floor] = button
+
+            label = tk.Label(self.frame, text="", background=self.BACKGROUND)
+            label.grid(row=NUMBER_OF_FLOORS - floor, column=4)
             floors_info[floor] = label
 
-        return buttons, floors, floors_info
+        return floor_buttons_up, floor_buttons_down, buttons, floors, floors_info
 
     def add_simulator(self, simulator):
         self.simulator = simulator
 
     def go_floor(self, floor):
+        self.simulator.realtime_interrupt("inport_go %s" % floor)
+
+    def go_floor_external_up(self, floor):
+        self.simulator.realtime_interrupt("inport_go %s" % floor)
+
+    def go_floor_external_down(self, floor):
         self.simulator.realtime_interrupt("inport_go %s" % floor)
 
     def update_floor(self, new_floor: int):

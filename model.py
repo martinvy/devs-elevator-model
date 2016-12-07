@@ -62,6 +62,7 @@ class ElevatorGO(AtomicDEVS):
         self.current_floor = 0
         self.last_stop = 0
         self.next_stop = 0
+        self.request_queue = []
 
     def timeAdvance(self):
         if self.state == "IDLE":   # waits for button request
@@ -78,6 +79,8 @@ class ElevatorGO(AtomicDEVS):
             return 0
         if self.state == "CLOSING":  # plan to switch to CLOSING state after timeout of IS_OPENED state
             return OPENED_FOR_TIME
+        if self.state == "CHECK_STACK":
+            return 0
 
     def outputFnc(self):
         logger.info("GO Out: %s -> %s", self.current_floor, self.next_stop)
@@ -101,8 +104,13 @@ class ElevatorGO(AtomicDEVS):
             self.state = "IS_CLOSED"
             self.api.closing_doors(self.current_floor)
         elif self.state == "IS_CLOSED":
-            self.state = "IDLE"
+            self.state = "CHECK_STACK"
             self.api.closed_doors(self.current_floor)
+        elif self.state == "CHECK_STACK":
+            if self.request_queue:
+                self.move(self.request_queue.pop(0))
+            else:
+                self.state = "IDLE"
         elif self.state == "GO":
             self.state = "GOING"
             self.api.set_destination_floor(self.next_stop)
@@ -112,7 +120,7 @@ class ElevatorGO(AtomicDEVS):
         logger.info("GO Ext: %s", inputs.values())
 
         floor = inputs.get(self.inport_floor_update)
-        if floor:
+        if floor is not None:
             self.current_floor = floor
             if self.next_stop == floor:
                 self.state = "OPENING"
@@ -121,7 +129,7 @@ class ElevatorGO(AtomicDEVS):
                 self.state = "GO"
 
         next_stop = inputs.get(self.inport_go)
-        if next_stop:
+        if next_stop is not None:
             # external transition from simulation interrupt is list for some reason
             if isinstance(next_stop, list):
                 next_stop = int(next_stop[0])
@@ -133,9 +141,17 @@ class ElevatorGO(AtomicDEVS):
                     self.state = "GO"
                     self.next_stop = next_stop
             else:
-                # TODO: new customer can't use elevator which is moving now
-                pass
+                logger.info("GO queued %s", next_stop)
+                self.request_queue.append(next_stop)
         return self.state
+
+    def move(self, next_stop):
+        logger.info("GO move %s", next_stop)
+        if next_stop == self.current_floor:
+            self.state = "OPEN"
+        else:
+            self.state = "GO"
+            self.next_stop = next_stop
 
 
 class RandomRequest(AtomicDEVS):
@@ -240,6 +256,6 @@ if __name__ == "__main__":
     model = Model(FakeGUI())
     sim = Simulator(model)
     sim.setClassicDEVS()
-    sim.setTerminationTime(50.0)
+    sim.setTerminationTime(100.0)
     sim.setVerbose()
     sim.simulate()
