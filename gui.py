@@ -6,7 +6,7 @@ import tkinter as tk
 from functools import partial
 
 from model import Model, Simulator
-from settings import NUMBER_OF_FLOORS, SIMULATION_REAL_TIME_SCALE
+from settings import *
 
 
 class App:
@@ -43,6 +43,8 @@ class App:
         canvas.create_line(0, 200, 600, 200)
         self.current_floor = 0
         self.destination_floor = 0
+        self.doors_time = 0
+        self.progress = False
 
         right_scrollbar = tk.Scrollbar(self.right_frame, orient=tk.HORIZONTAL)
         right_scrollbar.grid(row=1, column=0, sticky=tk.W + tk.E)
@@ -59,6 +61,14 @@ class App:
                     100 - 10 * self.current_floor,
                     fill="red", width=2.0
                 )
+                # show progress of opening/opened/closing doors
+                if self.progress:
+                    text = self.floors_info[self.current_floor]["text"]
+                    text = text.split(" ")[0]
+                    text += " {}s".format((self.time - self.doors_time))
+                    self.floors_info[self.current_floor]["text"] = text
+                    self.top_label_time["text"] += 1
+
             if self.destination_floor:
                 canvas.create_line(
                     self.time,
@@ -110,6 +120,27 @@ class App:
         for floor in self.floors.values():
             floor["text"] = ""
         self.floors[new_floor]["text"] = "[]"
+
+    def opened_doors(self, current_floor):
+        self.progress = True
+        self.doors_time = self.time
+        self.floors_info[current_floor]["text"] = "opened"
+
+    def closed_doors(self, current_floor):
+        self.progress = False
+        self.doors_time = self.time
+        self.floors_info[current_floor]["text"] = ""
+        self.buttons[current_floor].config(state=tk.NORMAL, background=self.BACKGROUND)
+
+    def opening_doors(self, current_floor):
+        self.progress = True
+        self.doors_time = self.time
+        self.floors_info[current_floor]["text"] = "opening"
+
+    def closing_doors(self, current_floor):
+        self.progress = True
+        self.doors_time = self.time
+        self.floors_info[current_floor]["text"] = "closing"
 
     def clear_destination_floor(self):
         for floor in self.floors_info.values():

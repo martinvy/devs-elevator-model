@@ -7,7 +7,7 @@ from pypdevs.DEVS import AtomicDEVS, CoupledDEVS
 from pypdevs.simulator import Simulator
 from pypdevs.infinity import INFINITY
 
-from settings import NUMBER_OF_FLOORS
+from settings import *
 
 logging.basicConfig()
 logger = logging.getLogger("Model")
@@ -56,39 +56,68 @@ class ElevatorGO(AtomicDEVS):
         super().__init__("ElevatorGO")
         self.api = api
         self.inport_go = self.addInPort("inport_go")
-        self.inport_floor = self.addInPort("inport_floor")
-        self.outport = self.addOutPort("outport")
+        self.inport_floor_update = self.addInPort("inport_floor_update")
+        self.outport_updown_request = self.addOutPort("outport_updown_request")
         self.state = "IDLE"
         self.current_floor = 0
         self.last_stop = 0
         self.next_stop = 0
 
     def timeAdvance(self):
-        if self.state == "IDLE":
+        if self.state == "IDLE":   # waits for button request
             return INFINITY
-        if self.state == "GO":
+        if self.state == "GOING":  # waits for floor update
+            return INFINITY
+        if self.state == "GO":  # perform UP or DOWN request to elevator and switch state to GOING
             return 0
+        if self.state == "IS_OPENED":  # doors are open, switch to CLOSING
+            return OPENING_TIME
+        if self.state == "IS_CLOSED":  # doora are now CLOSING, after timeout switch to IS_CLOSED, then immediately to IDLE
+            return CLOSING_TIME
+        if self.state == "OPENING":  # immediately start opening the doors, switch to IS_OPENED
+            return 0
+        if self.state == "CLOSING":  # plan to switch to CLOSING state after timeout of IS_OPENED state
+            return OPENED_FOR_TIME
 
     def outputFnc(self):
         logger.info("GO Out: %s -> %s", self.current_floor, self.next_stop)
-        direction = "UP" if self.next_stop > self.current_floor else "DOWN"
-        return {self.outport: direction}
+        if self.state == "GO":
+            if self.next_stop > self.current_floor:
+                direction = "UP"
+            else:
+                direction = "DOWN"
+            return {self.outport_updown_request: direction}
+        return {}
 
     def intTransition(self):
         logger.info("GO Int: %s", self.current_floor)
-        self.state = "IDLE"
+        if self.state == "IS_OPENED":
+            self.state = "CLOSING"
+            self.api.opened_doors(self.current_floor)
+        elif self.state == "OPENING":
+            self.state = "IS_OPENED"
+            self.api.opening_doors(self.current_floor)
+        elif self.state == "CLOSING":
+            self.state = "IS_CLOSED"
+            self.api.closing_doors(self.current_floor)
+        elif self.state == "IS_CLOSED":
+            self.state = "IDLE"
+            self.api.closed_doors(self.current_floor)
+        elif self.state == "GO":
+            self.state = "GOING"
+            self.api.set_destination_floor(self.next_stop)
         return self.state
 
     def extTransition(self, inputs):
         logger.info("GO Ext: %s", inputs.values())
 
-        floor = inputs.get(self.inport_floor)
+        floor = inputs.get(self.inport_floor_update)
         if floor:
             self.current_floor = floor
             if self.next_stop == floor:
-                self.state = "IDLE"
-                self.api.clear_destination_floor()
+                self.state = "OPENING"
             else:
+                assert self.state == "GOING"
                 self.state = "GO"
 
         next_stop = inputs.get(self.inport_go)
@@ -99,11 +128,10 @@ class ElevatorGO(AtomicDEVS):
 
             if self.state == "IDLE":
                 if next_stop == self.current_floor:
-                    pass
+                    self.state = "OPEN"
                 else:
                     self.state = "GO"
                     self.next_stop = next_stop
-                    self.api.set_destination_floor(next_stop)
             else:
                 # TODO: new customer can't use elevator which is moving now
                 pass
@@ -198,8 +226,8 @@ class Model(CoupledDEVS):
         self.elevator = self.addSubModel(Elevator(api))
         self.elevator_go = self.addSubModel(ElevatorGO(api))
         self.request = self.addSubModel(RandomRequest(api))
-        self.connectPorts(self.elevator_go.outport, self.elevator.inport)
-        self.connectPorts(self.elevator.outport, self.elevator_go.inport_floor)
+        self.connectPorts(self.elevator_go.outport_updown_request, self.elevator.inport)
+        self.connectPorts(self.elevator.outport, self.elevator_go.inport_floor_update)
         self.connectPorts(self.request.outport, self.elevator_go.inport_go)
 
 
