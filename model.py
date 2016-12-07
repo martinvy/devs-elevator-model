@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Model of elevator system using DEVS formalism.
+Model is coupled DEVS consisting of two atomic DEVS components.
+
+Usage: python model.py
+"""
 
 import random
 import logging
@@ -15,9 +21,17 @@ logger.setLevel(logging.DEBUG)
 
 
 class Elevator(AtomicDEVS):
-    MOVE_TIME = 2
+    """
+    Simple elevator model capable of moving one floor up or down.
+    Interface:
+        input: UP / DOWN command
+        output: number of the current floor
+    """
 
     def __init__(self, api):
+        """
+        :param api: reference to the GUI
+        """
         super().__init__("Elevator")
         self.api = api
         self.inport = self.addInPort("inport")
@@ -29,7 +43,7 @@ class Elevator(AtomicDEVS):
         if self.state == "IDLE":
             return INFINITY
         if self.state in ("UP", "DOWN"):
-            return self.MOVE_TIME
+            return ONE_FLOOR_MOVING_TIME
 
     def outputFnc(self):
         logger.info("EL Out: %s", self.floor)
@@ -52,7 +66,20 @@ class Elevator(AtomicDEVS):
 
 
 class ElevatorGO(AtomicDEVS):
+    """
+    Elevator model capable of moving to specified floor.
+    Elevator stops on the floors by the way to original destination
+    if customers intend to go in the same direction.
+    Interface:
+        input: internal floor button (buttons inside the elevator)
+               external floor button up / down (buttons on the floors)
+               current floor update from Simple Elevator
+        output: one floor up / down request for Simple Elevator
+    """
     def __init__(self, api):
+        """
+        :param api: reference to the GUI
+        """
         super().__init__("ElevatorGO")
         self.api = api
         self.inport_go = self.addInPort("inport_go")
@@ -81,7 +108,7 @@ class ElevatorGO(AtomicDEVS):
             return 0
         if self.state == "CLOSING":  # plan to switch to CLOSING state after timeout of IS_OPENED state
             return OPENED_FOR_TIME
-        if self.state == "CHECK_STACK":
+        if self.state == "CHECK_REQUEST_QUEUE":  # check queued requests and initiate new move if any
             return 0
 
     def outputFnc(self):
@@ -106,9 +133,9 @@ class ElevatorGO(AtomicDEVS):
             self.state = "IS_CLOSED"
             self.api.closing_doors(self.current_floor)
         elif self.state == "IS_CLOSED":
-            self.state = "CHECK_STACK"
+            self.state = "CHECK_REQUEST_QUEUE"
             self.api.closed_doors(self.current_floor)
-        elif self.state == "CHECK_STACK":
+        elif self.state == "CHECK_REQUEST_QUEUE":
             if self.request_queue:
                 self.move(self.request_queue.pop(0))
             else:
@@ -155,7 +182,7 @@ class ElevatorGO(AtomicDEVS):
                     self.request_queue.append(self.next_stop)
                     self.next_stop = next_stop
 
-        # go request UP (external button)
+        # go request DOWN (external button)
         next_stop = inputs.get(self.inport_go_external_down)
         if next_stop is not None:
             next_stop = self.cast_from_interrupt(next_stop)
@@ -194,9 +221,15 @@ class ElevatorGO(AtomicDEVS):
 
 
 class RandomRequest(AtomicDEVS):
-    REQUEST_INTERVAL = 30
+    """
+    Random request generator for simulation purposes.
+    """
+    REQUEST_INTERVAL = 3000
 
     def __init__(self, api):
+        """
+        :param api: reference to the GUI
+        """
         super().__init__("Request")
         self.api = api
         self.outport = self.addOutPort("output")
@@ -211,71 +244,11 @@ class RandomRequest(AtomicDEVS):
             return {self.outport: random.choice(range(NUMBER_OF_FLOORS))}
 
 
-class ButtonRequest(AtomicDEVS):
-    def __init__(self, api):
-        super().__init__("ButtonRequest")
-        self.api = api
-        self.inport_Extbutton = self.addInPort("inport_Extbutton")
-        self.inport_Intbutton = self.addInPort("inport_Intbutton")
-        self.inport_Floor = self.addInPort("inport_Floor")
-        self.outport = self.addOutPort("outport_GoFloor")
-        self.state = "IDLE"
-        self.all_floor = []
-        self.go_to_floor = 0
-
-    def timeAdvance(self):
-        return INFINITY
-
-    def outputFnc(self):
-        if self.state == "GO_TO":
-            return {self.outport: self.go_to_floor}
-
-    def intTransition(self):
-        logger.info("Int: %s", self.floor)
-        self.state = "IDLE"
-        return self.state
-
-    def extTransition(self, inputs):
-        logger.info("Ext: %s", inputs.values())
-        ext_button = inputs.get(self.inport_Extbutton)
-        if ext_button:
-            self.ExtButton = ext_button
-            self.floor = inputs.get(self.inport_Floor)
-            if self.state == "IDLE":
-                self.all_floor.clear()
-                self.all_floor.append(self.ExtButton % 10)
-                self.state = "GO_TO"
-            elif self.state == "MOVING":
-                if self.floor == self.go_to_floor:
-                    if len(self.all_floor) == 0:
-                        self.state = "IDLE"
-                    else:
-                        self.state = "GO_TO"
-                if self.floor < self.all_floor[0]:
-                    if self.ExtButton/10 == 1 and self.ExtButton % 10 < self.all_floor[0]:
-                        self.all_floor.append(self.ExtButton % 10)
-                        self.state = "GO_TO"
-                    else:
-                        self.all_floor.append(self.ExtButton % 10)
-                elif self.floor > self.all_floor[0]:
-                    if self.ExtButton / 10 == 2 and self.ExtButton % 10 > self.all_floor[0]:
-                        self.all_floor.append(self.ExtButton % 10)
-                        self.state = "GO_TO"
-                    else:
-                        self.all_floor.append(self.ExtButton % 10)
-                self.state = "GO_TO"
-            elif self.state == "GO_TO":
-                if max(self.all_floor) < self.floor:
-                    self.go_to_floor = max(self.all_floor)
-                    self.all_floor.remove(max(self.all_floor))
-                elif min(self.all_floor) > self.floor:
-                    self.go_to_floor = min(self.all_floor)
-                    self.all_floor.remove(min(self.all_floor))
-                self.state = "MOVING"
-            return self.state
-
-
 class Model(CoupledDEVS):
+    """
+    Coupled DEVS component connecting Elevator and ElevatorGO atomic DEVS components.
+    For simulation purposes RandomRequest generator is connected to the ElevatorGO.
+    """
     def __init__(self, api):
         super().__init__("model")
         self.elevator = self.addSubModel(Elevator(api))
@@ -289,6 +262,10 @@ class Model(CoupledDEVS):
         """ On conflict prefer trasition on ElevatorGO """
         return imm_children[1]
 
+
+# if this file is directly executed via `python model.py` simulate the model
+# in fast simulation time. `api` param is set to the FakeGUI because model performs
+# GUI update callback in various places
 
 if __name__ == "__main__":
 

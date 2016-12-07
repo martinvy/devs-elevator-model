@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+Graphical user interface for model of elevator designed using DEVS formalism.
+
+Usage: python gui.py
+"""
 
 import threading
 import tkinter as tk
