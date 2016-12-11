@@ -214,7 +214,7 @@ class ElevatorGO(AtomicDEVS):
     def move(self, next_stop):
         logger.info("GO move %s", next_stop)
         if next_stop == self.current_floor:
-            self.state = "OPEN"
+            self.state = "OPENING"
         else:
             self.state = "GO"
             self.next_stop = next_stop
