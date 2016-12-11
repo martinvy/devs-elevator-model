@@ -6,15 +6,22 @@ University project for course of Intelligent systems (SIN) at FIT VUT.
 - Marek Dokulil, xdokul03
 - Marek Skalnik, xskaln03
 
-### Dependencies:
-- **pypdevs**
-	- Download from http://msdl.cs.mcgill.ca/projects/DEVS/PythonPDEVS/Tutorial/distribution.zip
-	- Extract the file
-    - Go into `pypdevs/src` and run `python setup.py install`
+### Install:
+- Run `make install`
+- Dependencies:
+	-   **tkinter** for displaying the GUI window (tk must be installed on the system `sudo apt-get install python3-tk`)
+	
+	-   **pypdevs** for DEVS model and simulation of the Elevator system 
+	(library has to be downloaded from http://msdl.cs.mcgill.ca/projects/DEVS/PythonPDEVS/Tutorial/distribution.zip and installed via `python setup.py install` - see INSTALL script for more info)
+
 
 ### Usage:
-- `python gui.py` to create a window with graphical user interface
-- `python model.py` to run simulation of elevator model with console output
+- Run `make run` to display the window
+- Alternatively: 
+	-   `python gui.py` to display the window with graphical user interface
+	
+	-   `python model.py` to run simulation of elevator model with only console output
+
 
 ### Settings:
 - see `settings.py` and adjust parameters of the model.

@@ -139,7 +139,7 @@ class App:
     def go_floor_external_down(self, floor):
         self.simulator.realtime_interrupt("inport_go_external_down %s" % floor)
 
-    def update_floor(self, new_floor: int):
+    def update_floor(self, new_floor):
         self.current_floor = new_floor
         for floor in self.floors.values():
             floor["text"] = ""
@@ -172,7 +172,7 @@ class App:
         for button in self.buttons.values():
             button.config(state=tk.NORMAL, background=self.BACKGROUND)
 
-    def set_destination_floor(self, new_floor: int):
+    def set_destination_floor(self, new_floor):
         self.destination_floor = new_floor
         self.clear_destination_floor()
         self.floors_info[new_floor]["text"] = "x"

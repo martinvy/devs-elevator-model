@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# create Python virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# download & install pypdevs
+wget http://msdl.cs.mcgill.ca/projects/DEVS/PythonPDEVS/Tutorial/distribution.zip
+unzip distribution.zip
+cd distribution/pypdevs/src
+python3 setup.py install
