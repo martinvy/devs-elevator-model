@@ -224,7 +224,7 @@ class RandomRequest(AtomicDEVS):
     """
     Random request generator for simulation purposes.
     """
-    REQUEST_INTERVAL = 3000
+    REQUEST_INTERVAL = 50
 
     def __init__(self, api):
         """
@@ -276,6 +276,6 @@ if __name__ == "__main__":
     model = Model(FakeGUI())
     sim = Simulator(model)
     sim.setClassicDEVS()
-    sim.setTerminationTime(100.0)
+    sim.setTerminationTime(200.0)
     sim.setVerbose()
     sim.simulate()
